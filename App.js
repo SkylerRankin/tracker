@@ -1,44 +1,84 @@
-import { StatusBar } from 'expo-status-bar';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import logo from './assets/logo.png';
+import { SafeAreaView, StyleSheet } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import HomePage from './src/pages/HomePage';
+import AddPage from './src/pages/AddPage';
+import ResponsePage from './src/pages/ResponsePage';
+import TrackerPage from './src/pages/TrackerPage';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import SafeViewAndroid from './src/styles/SafeViewAndroid';
+import { useState } from 'react';
+import AppContext from './src/components/AppContext';
+import { getLargeTestData, getPastThreeWeekTestData } from './src/components/TestData';
+
+/**
+
+Global store schema:
+
+- chart time scale: (0 = week, 1 = month, 2 = year)
+- chart time offset: integer number of `chart time scale`s from today into the past
+- trackers: array of tracker objects
+- selected trackers: array of indexes into `trackers`
+- past responses: array of past response objects
+
+Tracker object schema
+- name: string
+- segments: 10,
+- colorIndex: integer
+- invertAxis: boolean
+
+Past response schema
+- timestamp: timestamp
+- value: integer [1, 10]
+- notes: string
+
+*/
+
+const stack = createNativeStackNavigator();
 
 export default function App() {
-  const x = "testing";
-  return (
-    <View style={styles.container}>
-      <Image source={logo} style={{ width: 305, height: 159 }}/>
-      <Text>Open up App.js to start working on your app!</Text>
-      <Text>{x + 12}</Text>
-      {
-        [1, 2, 3].map(x => <Text style={styles.listItem}>{`number ${x}`}</Text>)
-      }
-      <TouchableOpacity
-        onPress={() => alert("pressed")}
-        style={styles.button}>
-        <Text style={styles.buttonText}>Pick a photo</Text>
-      </TouchableOpacity>
-      <StatusBar style="auto" />
-    </View>
-  );
+
+    const [chartTimeScale, setChartTimeScale] = useState(0);
+    const [chartTimeOffset, setChartTimeOffset] = useState(0);
+    const [pastResponses, setPastResponses] = useState([
+        getPastThreeWeekTestData(),
+        getLargeTestData()
+    ]);
+    const [trackers, setTrackers] = useState([
+        { name: "Knee Pain", segments: 10, colorIndex: 6, invertAxis: false },
+        { name: "Mood", segments: 10, colorIndex: 0, invertAxis: false }
+    ]);
+    const [selectedTrackers, setSelectedTrackers] = useState([0]);
+
+    const appSettings = {
+        chartTimeScale, setChartTimeScale,
+        chartTimeOffset, setChartTimeOffset,
+        pastResponses, setPastResponses,
+        trackers, setTrackers,
+        selectedTrackers, setSelectedTrackers
+    };
+
+    return (
+        <AppContext.Provider value={appSettings}>
+            <NavigationContainer style={styles.root}>
+                <SafeAreaView style={SafeViewAndroid.AndroidSafeArea}>
+                    <stack.Navigator>
+                        <stack.Screen
+                            name="Home"
+                            component={HomePage}
+                            options={{ headerShown: false }}/>
+                        <stack.Screen name="Add" component={AddPage} options={{ headerShown: false }}/>
+                        <stack.Screen name="Response" component={ResponsePage} options={{ headerShown: false }}/>
+                        <stack.Screen name="Trackers" component={TrackerPage} options={{ headerShown: false }}/>
+                    </stack.Navigator>
+                </SafeAreaView>
+            </NavigationContainer>
+        </AppContext.Provider>
+        
+    );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  listItem: {
-    color: '#42f584'
-  },
-  button: {
-    padding: 20,
-    borderRadius: 5,
-    backgroundColor: 'blue'
-  },
-  buttonText: {
-    fontSize: 20,
-    color: 'white'
-  }
+    root: {
+        backgroundColor: 'white'
+    }
 });
