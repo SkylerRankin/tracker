@@ -18,7 +18,10 @@ export default function AddPage({navigation}) {
             segments: 10,
             invertAxis: invertAxis
         };
-        context.setTrackers([newTracker, ...context.trackers]);
+        const pastResponses = context.pastResponses;
+        pastResponses.push([]);
+        context.setPastResponses(pastResponses);
+        context.setTrackers([...context.trackers, newTracker]);
         navigation.navigate("Home");
     }
 
@@ -29,7 +32,7 @@ export default function AddPage({navigation}) {
                 <TouchableOpacity
                     onPress={() => navigation.navigate('Home')}
                     style={{marginLeft: "auto"}}>
-                    <Text style={styles.buttonText}>home</Text>
+                    <Text style={styles.buttonText}>back</Text>
                 </TouchableOpacity>
             </View>
             <Text style={{marginBottom: 10, marginTop: 30}}>Name...</Text>

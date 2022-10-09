@@ -4,7 +4,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 const makeDateString = timestamp => {
     const months = ["Jan", "Fed", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     const date = new Date(timestamp);
-    return `${months[date.getMonth() - 1]} ${date.getDay()}, ${date.getFullYear()}`;
+    return `${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
 }
 
 export default function PastResponse({response}) {
@@ -26,7 +26,7 @@ export default function PastResponse({response}) {
                     { !expanded && <Text style={{marginLeft: "auto"}}>{notesText}</Text> }
                 </View>
                 {
-                    expanded && hasNote && <Text>{response.notes}</Text>
+                    expanded && hasNote && <Text style={{marginTop: 10}}>{response.notes}</Text>
                 }
             </View>
         </TouchableOpacity>

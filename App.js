@@ -19,6 +19,7 @@ Global store schema:
 - trackers: array of tracker objects
 - selected trackers: array of indexes into `trackers`
 - past responses: array of past response objects
+- using chart line: boolean, true when the vertical line is in use on the chat
 
 Tracker object schema
 - name: string
@@ -31,6 +32,8 @@ Past response schema
 - value: integer [1, 10]
 - notes: string
 
+Using Chart Line
+
 */
 
 const stack = createNativeStackNavigator();
@@ -41,20 +44,26 @@ export default function App() {
     const [chartTimeOffset, setChartTimeOffset] = useState(0);
     const [pastResponses, setPastResponses] = useState([
         getPastThreeWeekTestData(),
-        getLargeTestData()
+        getLargeTestData(),
+        getPastThreeWeekTestData(),
+        getPastThreeWeekTestData()
     ]);
     const [trackers, setTrackers] = useState([
         { name: "Knee Pain", segments: 10, colorIndex: 6, invertAxis: false },
-        { name: "Mood", segments: 10, colorIndex: 0, invertAxis: false }
+        { name: "Mood", segments: 10, colorIndex: 0, invertAxis: false },
+        { name: "Happiness", segments: 10, colorIndex: 3, invertAxis: false },
+        { name: "the deal", segments: 10, colorIndex: 2, invertAxis: false }
     ]);
     const [selectedTrackers, setSelectedTrackers] = useState([0]);
+    const [usingChartLine, setUsingChartLine] = useState(false);
 
     const appSettings = {
         chartTimeScale, setChartTimeScale,
         chartTimeOffset, setChartTimeOffset,
         pastResponses, setPastResponses,
         trackers, setTrackers,
-        selectedTrackers, setSelectedTrackers
+        selectedTrackers, setSelectedTrackers,
+        usingChartLine, setUsingChartLine
     };
 
     return (

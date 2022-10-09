@@ -1,14 +1,12 @@
 import { useContext, useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Image } from "react-native";
 import AppContext from "./AppContext";
 import { graphTimeRanges } from "./Constants";
+import leftArrow from '../../assets/images/leftArrow.png';
 
 export default function RangeSelector() {
 
     const context = useContext(AppContext);
-
-    // chartTimeScale, setChartTimeScale,
-    // chartTimeOffset, setChartTimeOffset,
 
     const onScaleSelected = i => {
         if (i !== context.chartTimeScale) {
@@ -40,11 +38,11 @@ export default function RangeSelector() {
                 { ranges }
             </View>
             <View style={styles.arrowContainer}>
-                <TouchableOpacity onPress={() => onOffsetChanged(-1)} style={[styles.arrowButton, { marginRight: 3 }]}>
-                    <Text>{"<-"}</Text>
+                <TouchableOpacity onPress={() => onOffsetChanged(1)} style={[styles.arrowButton, { marginRight: 3 }]}>
+                    <Image style={styles.arrowImage} source={leftArrow}/>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => onOffsetChanged(1)} style={styles.arrowButton}>
-                    <Text>{"->"}</Text>
+                <TouchableOpacity onPress={() => onOffsetChanged(-1)} style={styles.arrowButton}>
+                    <Image style={[styles.arrowImage, {transform: [{rotate: "180deg"}]}]} source={leftArrow}/>
                 </TouchableOpacity>
             </View>
         </View>
@@ -80,11 +78,16 @@ const styles = StyleSheet.create({
     },
     arrowButton: {
         width: 70,
-        // height: "100%",
         alignItems: "center",
         justifyContent: "center",
         borderRadius: 8,
         backgroundColor: "white",
-        margin: 3
+        margin: 3,
+        padding: 2
+    },
+    arrowImage: {
+        width: 30,
+        height: 13,
+        tintColor: "#777"
     }
 });

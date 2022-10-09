@@ -4,15 +4,13 @@ import AppContext from '../components/AppContext';
 import PastResponse from '../components/PastResponse';
 import ScrollableSelector from '../components/ScrollableSelector';
 
-export default function TrackerPage({navigation}) {
-    const trackerName = "Knee pain";
-    const trackerSegments = 10;
-
+export default function TrackerPage({ navigation, route }) {
+    const trackerIndex = route.params.trackerIndex;
     const context = useContext(AppContext);
     const [responseValue, setResponseValue] = useState(0);
     const [responseNotes, setResponseNotes] = useState("");
 
-    const tracker = context.trackers[context.selectedTrackerIndex];
+    const tracker = context.trackers[trackerIndex];
 
     const onSave = () => {
         const response = {
@@ -20,7 +18,9 @@ export default function TrackerPage({navigation}) {
             value: responseValue,
             notes: responseNotes
         };
-        context.setPastResponses([response, ...context.pastResponses]);
+        const pastResponses = context.pastResponses;
+        pastResponses[trackerIndex].push(response);
+        context.setPastResponses(pastResponses);
         setResponseNotes("");
     }
 
@@ -31,7 +31,7 @@ export default function TrackerPage({navigation}) {
                 <TouchableOpacity
                     onPress={() => navigation.navigate('Home')}
                     style={{marginLeft: "auto"}}>
-                    <Text style={styles.buttonText}>X</Text>
+                    <Text style={styles.buttonText}>back</Text>
                 </TouchableOpacity>
             </View>
             <Text style={styles.responseText}>Today's response...</Text>
@@ -46,7 +46,7 @@ export default function TrackerPage({navigation}) {
             </TouchableOpacity>
             <Text style={[styles.responseText, {marginTop: 60}]}>Past responses...</Text>
             <ScrollView style={styles.pastResponseContainer}>
-                { context.pastResponses[context.selectedTrackerIndex].map(response => <PastResponse response={response}/>) }
+                { context.pastResponses[trackerIndex].map((response, i) => <PastResponse key={i} response={response}/>) }
             </ScrollView>
         </View>
     );

@@ -1,21 +1,21 @@
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
-import bellIcon from '../../assets/images/bellIcon.png';
-import checkIcon from '../../assets/images/checkIcon.png';
+import dotIcon from '../../assets/images/dot.png';
+import checkIcon from '../../assets/images/check.png';
 import { graphColors } from "./Constants";
 
-export default function Tracker({navigation, data, selected, onPress}) {
+export default function Tracker({navigation, tracker, selected, onPress, index}) {
     return (
         <TouchableOpacity
             onPress={onPress}
             onLongPress={() => {
-                navigation.navigate("Trackers")
+                navigation.navigate("Trackers", { trackerIndex: index })
             }}>
             <View style={styles.container}>
-                <Text style={styles.nameText}>{data.name}</Text>
+                <Text style={styles.nameText}>{tracker.name}</Text>
                 {
-                    !data.completed && <Image style={[styles.reminderImage, styles.firstImageInRow]} source={bellIcon}/>
+                    !tracker.completed && <Image style={[styles.reminderImage, styles.firstImageInRow]} source={dotIcon}/>
                 }
-                <Image style={[styles.isSelectedImage, selected && { tintColor: graphColors[data.colorIndex] }, data.completed && styles.firstImageInRow]} source={checkIcon}/>
+                <Image style={[styles.isSelectedImage, selected && { tintColor: graphColors[tracker.colorIndex] }, tracker.completed && styles.firstImageInRow]} source={checkIcon}/>
             </View>
         </TouchableOpacity>
     );
@@ -24,7 +24,7 @@ export default function Tracker({navigation, data, selected, onPress}) {
 const styles = StyleSheet.create({
     container: {
         height: 50,
-        marginBottom: 20,
+        marginBottom: 10,
         flexDirection: 'row',
         // backgroundColor: '#f2f2f2',
         borderColor: '#349beb',
