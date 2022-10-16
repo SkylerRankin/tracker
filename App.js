@@ -8,7 +8,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import SafeViewAndroid from './src/styles/SafeViewAndroid';
 import { useState } from 'react';
 import AppContext from './src/components/AppContext';
-import { getLargeTestData, getPastThreeWeekTestData } from './src/components/TestData';
+import { getLargeTestData, getPastThreeWeekGappedTestData, getPastThreeWeekTestData, getTestData } from './src/components/TestData';
 
 /**
 
@@ -45,8 +45,8 @@ export default function App() {
     const [pastResponses, setPastResponses] = useState([
         getPastThreeWeekTestData(),
         getLargeTestData(),
-        getPastThreeWeekTestData(),
-        getPastThreeWeekTestData()
+        getPastThreeWeekGappedTestData(),
+        getTestData()
     ]);
     const [trackers, setTrackers] = useState([
         { name: "Knee Pain", segments: 10, colorIndex: 6, invertAxis: false },
@@ -54,7 +54,7 @@ export default function App() {
         { name: "Happiness", segments: 10, colorIndex: 3, invertAxis: false },
         { name: "the deal", segments: 10, colorIndex: 2, invertAxis: false }
     ]);
-    const [selectedTrackers, setSelectedTrackers] = useState([0]);
+    const [selectedTrackers, setSelectedTrackers] = useState([2]);
     const [usingChartLine, setUsingChartLine] = useState(false);
 
     const appSettings = {

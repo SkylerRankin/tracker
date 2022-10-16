@@ -41,7 +41,7 @@ export default function RangeSelector() {
                 <TouchableOpacity onPress={() => onOffsetChanged(1)} style={[styles.arrowButton, { marginRight: 3 }]}>
                     <Image style={styles.arrowImage} source={leftArrow}/>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => onOffsetChanged(-1)} style={styles.arrowButton}>
+                <TouchableOpacity onPress={() => onOffsetChanged(-1)} style={[styles.arrowButton, { marginLeft: 0 }]}>
                     <Image style={[styles.arrowImage, {transform: [{rotate: "180deg"}]}]} source={leftArrow}/>
                 </TouchableOpacity>
             </View>
