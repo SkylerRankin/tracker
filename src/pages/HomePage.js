@@ -1,4 +1,4 @@
-import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import TrackingChart from '../components/TrackingChart';
 import Tracker from '../components/Tracker';
 import { useContext, useState } from 'react';
@@ -7,7 +7,7 @@ import RangeSelector from '../components/RangeSelector';
 import DateAxis from '../components/DateAxis';
 import EditableTracker from '../components/EditableTracker';
 import ChartLineDate from '../components/ChartLineDate';
-import plusIcon from '../../assets/images/plus.png';
+import { deleteLocalStorage } from '../components/StorageUtil';
 
 export default function HomePage({navigation}) {
     
@@ -40,11 +40,8 @@ export default function HomePage({navigation}) {
         <View style={styles.container}>
             <View style={styles.header}>
                 <Text style={styles.title}>daily tracker</Text>
-                <TouchableOpacity
-                    onPress={() => navigation.navigate('Add')}
-                    style={styles.addButton}>
-                    <Image style={styles.addButtonImage} source={plusIcon}/>
-                    {/* <Text style={styles.addButtonText}>+</Text> */}
+                <TouchableOpacity onPress={async () => await deleteLocalStorage()}>
+                    <Text>Delete local data</Text>
                 </TouchableOpacity>
             </View>
             <View style={{marginBottom: 20}}><RangeSelector/></View>
@@ -56,16 +53,24 @@ export default function HomePage({navigation}) {
                 editTrackers ?
                 <View style={styles.trackerHeader}>
                     <Text style={styles.trackersText}>Edit trackers</Text>
-                    <TouchableOpacity onPress={() => setEditTrackers(false)}>
-                        <Text style={styles.trackedEditText}>back</Text>
-                    </TouchableOpacity>
+                    <View style={{marginLeft: "auto", flexDirection: "row"}}>
+                        <TouchableOpacity style={{marginRight: 20}} onPress={() => setEditTrackers(false)}>
+                            <Text style={styles.trackedEditText}>back</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
                 :
                 <View style={styles.trackerHeader}>
                     <Text style={styles.trackersText}>Your trackers</Text>
-                    <TouchableOpacity onPress={() => setEditTrackers(true)}>
-                        <Text style={styles.trackedEditText}>edit</Text>
-                    </TouchableOpacity>
+                    <View style={{marginLeft: "auto", flexDirection: "row"}}>
+                        <TouchableOpacity onPress={() => setEditTrackers(true)}>
+                            <Text style={styles.trackedEditText}>edit</Text>
+                        </TouchableOpacity>
+                        <Text style={{marginHorizontal: 10, color: "#777"}}>|</Text>
+                        <TouchableOpacity style={{marginRight: 20}} onPress={() => navigation.navigate('Add')}>
+                            <Text style={styles.newTrackerText}>new</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
             }
             <ScrollView style={styles.trackersView}>
@@ -139,6 +144,9 @@ const styles = StyleSheet.create({
     },
     trackedEditText: {
         marginLeft: 30,
+        color: "#777"
+    },
+    newTrackerText: {
         color: "#777"
     },
     trackersText: {

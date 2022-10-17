@@ -29,9 +29,9 @@ const createScrollSegments = (selectedIndex, segments) => {
             styles.segmentContainer
         ];
         scrollSegments.push(
-            <TouchableWithoutFeedback>
+            <TouchableWithoutFeedback key={i}>
                 <View style={containerStylesList}>
-                    <View key={i} style={segmentStylesList}>
+                    <View style={segmentStylesList}>
                         <Text style={{textAlign: "center", fontSize: 20}}>{text}</Text>
                     </View>
                 </View>
@@ -40,10 +40,11 @@ const createScrollSegments = (selectedIndex, segments) => {
     }
 
     const firstBufferWidth = halfTotalWidth - (segmentWidth / 2);
-    const bufferSegment = (
-        <View style={[{width: firstBufferWidth}]}></View>
-    );
-    scrollSegments = [bufferSegment, ...scrollSegments, bufferSegment];
+    scrollSegments = [
+        <View key={"buffer0"} style={[{width: firstBufferWidth}]}></View>,
+        ...scrollSegments,
+        <View key={"buffer1"} style={[{width: firstBufferWidth}]}></View>,
+    ];
 
     return scrollSegments;
 }
