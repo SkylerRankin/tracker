@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { Dimensions, StyleSheet, View } from 'react-native';
+import { Dimensions, StyleSheet, Text, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { LineChart } from 'react-native-wagmi-charts';
@@ -49,30 +49,27 @@ export default function TrackingChart() {
 
     const charts = [];
     datasets.forEach((data, i) => {
+        const currentValue = currentIndex >= 0 && data.dataset.length > currentIndex ? data.dataset[currentIndex].value : -1;
+        const toolTip = currentValue >= 0 ?
+            <LineChart.Tooltip>
+                <Text style={[tooltipStyles.tooltip, { backgroundColor: data.color }]}>
+                    { currentValue }
+                </Text>
+            </LineChart.Tooltip> : null;
+
         charts.push(
             <LineChart key={i} id={`${i}`} width={ chartWidth } height={ chartHeight }>
                 <LineChart.Path color={data.color} width={chartLineWidthByScale[context.chartTimeScale]} pathProps={{isTransitionEnabled: false}}>
-                    {
-                        // data.dataset.map((_, i) => <LineChart.Dot key={i} color="black" at={i} />)
-                    }
                     {/* {
-                        data.startBufferSize > 0 &&
-                            <LineChart.Highlight
-                                color="white"
-                                from={0}
-                                to={data.startBufferSize}
-                                width={chartLineWidthByScale[context.chartTimeScale]} />
-                    } */}
-                    {
                         i === 0 && [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(y => (
                             <LineChart.HorizontalLine key={y} color={"#f3f3f3"} lineProps={{ strokeDasharray: [0], strokeWidth: 1 }} at={{value: y}}/>
                         ))
-                    }
+                    } */}
                 </LineChart.Path>
-                <LineChart.CursorCrosshair>
-                    <LineChart.Tooltip textStyle={[tooltipStyles.tooltip, { backgroundColor: data.color }]} />
-                </LineChart.CursorCrosshair>
                 { i === 0 && <LineChart.CursorLine/> }
+                <LineChart.CursorCrosshair>
+                    { toolTip }
+                </LineChart.CursorCrosshair>
             </LineChart>
         );
     });
@@ -89,7 +86,6 @@ export default function TrackingChart() {
                     <LineChart.Group>
                         { charts && charts.length > 0 && charts }
                     </LineChart.Group>
-                    {/* <LineChart.PriceText format={({value}) => { return 'price' }}/> */}
                 </LineChart.Provider>
             </GestureHandlerRootView>            
         </View>
@@ -103,5 +99,7 @@ const tooltipStyles = StyleSheet.create({
         color: 'white',
         fontSize: 14,
         padding: 4,
+        width: 30,
+        textAlign: "center"
     }
 });

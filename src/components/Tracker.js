@@ -8,7 +8,7 @@ export default function Tracker({navigation, tracker, selected, onPress, index})
         <TouchableOpacity
             onPress={onPress}
             onLongPress={() => {
-                navigation.navigate("Trackers", { trackerIndex: index })
+                navigation.push("Trackers", { trackerIndex: index })
             }}>
             <View style={styles.container}>
                 <Text style={styles.nameText}>{tracker.name}</Text>

@@ -1,8 +1,10 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Dimensions, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import AppContext from '../components/AppContext';
 import PastResponse from '../components/PastResponse';
 import ScrollableSelector from '../components/ScrollableSelector';
+
+const maxResponsesInList = 50;
 
 export default function TrackerPage({ navigation, route }) {
     const trackerIndex = route.params.trackerIndex;
@@ -24,12 +26,19 @@ export default function TrackerPage({ navigation, route }) {
         setResponseNotes("");
     }
 
+    const pastResponses = context.pastResponses[trackerIndex].length <= maxResponsesInList ?
+        [...context.pastResponses[trackerIndex]] :
+        context.pastResponses[trackerIndex].slice(
+            context.pastResponses[trackerIndex].length - maxResponsesInList,
+            context.pastResponses[trackerIndex].length);
+    pastResponses.reverse();
+
     return (
         <View style={styles.container}>
             <View style={{flexDirection: "row"}}>
                 <Text style={styles.trackerName}>{tracker.name}</Text>
                 <TouchableOpacity
-                    onPress={() => navigation.navigate('Home')}
+                    onPress={() => navigation.pop()}
                     style={{marginLeft: "auto"}}>
                     <Text style={styles.buttonText}>back</Text>
                 </TouchableOpacity>
@@ -46,7 +55,7 @@ export default function TrackerPage({ navigation, route }) {
             </TouchableOpacity>
             <Text style={[styles.responseText, {marginTop: 60}]}>Past responses...</Text>
             <ScrollView style={styles.pastResponseContainer}>
-                { context.pastResponses[trackerIndex].map((response, i) => <PastResponse key={i} response={response}/>) }
+                { pastResponses.map((response, i) => <PastResponse key={i} response={response}/>) }
             </ScrollView>
         </View>
     );

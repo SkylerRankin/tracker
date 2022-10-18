@@ -7,10 +7,10 @@ import TrackerPage from './src/pages/TrackerPage';
 import StartPage from './src/pages/StartPage';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import SafeViewAndroid from './src/styles/SafeViewAndroid';
-import { Component, useContext, useEffect, useRef, useState } from 'react';
+import { Component } from 'react';
 import AppContext from './src/components/AppContext';
 import { getLargeTestData, getPastThreeWeekGappedTestData, getPastThreeWeekTestData, getTestData } from './src/components/TestData';
-import { loadResponses, loadTrackers, runStorageInitialization, writeAppData } from './src/components/StorageUtil';
+import { runStorageInitialization, writeAppData } from './src/components/StorageUtil';
 
 /**
 
@@ -65,6 +65,8 @@ export default class App extends Component {
         // Use an arrow function for listener to ensure onAppStateChange has the scope access to this.state.
         this.appStateSubscription = AppState.addEventListener("change", (nextAppState) => this.onAppStateChange(nextAppState));
         const loadedData = await runStorageInitialization();
+        // FOR DEBUGGING!!!!!!!!!!!
+        loadedData.pastResponses[0] = getPastThreeWeekTestData();
         this.setState({
             ...prevState,
             dataInitialized: true,
@@ -133,20 +135,17 @@ export default class App extends Component {
 
         return (
             <AppContext.Provider value={appContext}>
-                <NavigationContainer style={styles.root} onStateChange={ s => console.log(s) }>
-                    <SafeAreaView style={SafeViewAndroid.AndroidSafeArea}>
+                <SafeAreaView style={SafeViewAndroid.AndroidSafeArea}>
+                    <NavigationContainer style={styles.root}>
                         <stack.Navigator>
                             <stack.Screen name="Start" component={StartPage} options={{ headerShown: false }} />
-                            <stack.Screen
-                                name="Home"
-                                component={HomePage}
-                                options={{ headerShown: false }}/>
-                            <stack.Screen name="Add" component={AddPage} options={{ headerShown: false }}/>
-                            <stack.Screen name="Response" component={ResponsePage} options={{ headerShown: false }}/>
-                            <stack.Screen name="Trackers" component={TrackerPage} options={{ headerShown: false }}/>
+                            <stack.Screen name="Home" component={HomePage} options={{ headerShown: false }} />
+                            <stack.Screen name="Add" component={AddPage} options={{ headerShown: false }} />
+                            <stack.Screen name="Response" component={ResponsePage} options={{ headerShown: false }} />
+                            <stack.Screen name="Trackers" component={TrackerPage} options={{ headerShown: false }} />
                         </stack.Navigator>
-                    </SafeAreaView>
-                </NavigationContainer>
+                    </NavigationContainer>
+                </SafeAreaView>
             </AppContext.Provider>
         );
     }
