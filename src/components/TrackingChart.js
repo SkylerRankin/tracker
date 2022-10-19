@@ -5,7 +5,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { LineChart } from 'react-native-wagmi-charts';
 import AppContext from './AppContext';
 import { graphColors } from './Constants';
-import { getDataset } from './DataUtil';
+import { getDatasetCacheKey, trimAndBufferDataset } from './DataUtil';
 
 const pageWidth = Dimensions.get("window").width;
 const chartWidth = pageWidth - 30 * 2;
@@ -13,30 +13,31 @@ const chartHeight = 250;
 const chartLineWidthByScale = [8, 4, 1];
 
 export default function TrackingChart() {
-
+    console.log("------------------ TrackingChart render() ---------------------------");
     const context = useContext(AppContext);
 
     const [currentIndex, setCurrentIndex] = useState(-1);
+
     const onCurrentIndexChange = index => {
         setCurrentIndex(index);
     }
 
     const datasets = [];
+    const chartTimeScale = context.chartTimeScale;
+
     const sortedTrackedIndices = context.selectedTrackers;
     sortedTrackedIndices.sort().reverse();
     sortedTrackedIndices.forEach(trackerIndex => {
         const tracker = context.trackers[trackerIndex];
-        const data = getDataset(context, trackerIndex);
-
-        if (data.dataset && data.dataset.length > 0) {
-            datasets.push({
-                dataset: data.dataset,
-                startBufferSize: data.startBufferSize,
-                endBufferSize: data.endBufferSize,
-                color: graphColors[tracker.colorIndex],
-                trackerIndex
-            });
-        }
+        const cacheKey = getDatasetCacheKey(context.chartTimeScale, context.aggregationMode, trackerIndex);
+        const fullData = context.datasetCache[cacheKey];
+        const finalData = trimAndBufferDataset(fullData, context.chartTimeScale, context.chartTimeOffset);
+        datasets.push({
+            dataset: finalData,
+            color: graphColors[tracker.colorIndex],
+            trackerIndex
+        });
+        console.log(`Using cached dataset for time scale ${chartTimeScale}, tracker ${trackerIndex}. ${fullData.length} items, ${finalData.length} items after trim and buffer.`);
     });
 
     // Ensure datasets all have the same length

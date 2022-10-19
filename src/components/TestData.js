@@ -27,7 +27,7 @@ export const getLargeTestData = () => {
 const getResponses = (count) => {
     const today = new Date();
     const responses = [];
-    for (let i = count - 1; i >= 0; i--) {
+    for (let i = count - 2; i >= 1; i--) {
         responses.push({
             timestamp: subDays(today, i).getTime(),
             value: Math.floor(Math.random() * 10) + 1,

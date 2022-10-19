@@ -19,3 +19,5 @@ export const graphTimeRanges = {
     labels: [ "W", "M", "Y" ],
     days: [ 7, 30, 365 ]
 }
+
+export const aggregationModes = ["Avg", "Min", "Max"];

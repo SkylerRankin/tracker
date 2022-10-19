@@ -1,6 +1,5 @@
 import { useContext, useState } from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
-import checkIcon from '../../assets/images/checkIcon.png';
 import xIcon from '../../assets/images/x.png';
 import upIcon from '../../assets/images/upArrow.png';
 import downIcon from '../../assets/images/downArrow.png';
@@ -12,20 +11,7 @@ export default function EditableTracker({tracker, index}) {
     const [ confirmDelete, setConfirmDelete ] = useState(false);
 
     const swapTrackerData = offset => {
-        const trackers = context.trackers;
-        [trackers[index], trackers[index + offset]] = [trackers[index + offset], trackers[index]];
-        context.setTrackers(trackers);
-
-        const pastResponses = context.pastResponses;
-        [pastResponses[index], pastResponses[index + offset]] = [pastResponses[index + offset], pastResponses[index]];
-        context.setPastResponses(pastResponses);
-
-        const selectedTrackers = context.selectedTrackers.map(trackerIndex => {
-            if (trackerIndex === index) return index + offset;
-            if (trackerIndex === index + offset) return index;
-            return trackerIndex;
-        });
-        context.setSelectedTrackers(selectedTrackers);
+        context.moveTrackerPosition(index, offset);
     }
 
     const onOrderUp = () => {
@@ -39,17 +25,7 @@ export default function EditableTracker({tracker, index}) {
     };
 
     const onDelete = () => {
-        const selectedTrackers = context.selectedTrackers.filter(i => i !== index).map(i => i > index ? i - 1 : i);
-        context.setSelectedTrackers(selectedTrackers);
-
-        const trackers = context.trackers;
-        trackers.splice(index, 1);
-        context.setTrackers(trackers);
-
-        const pastResponses = context.pastResponses;
-        pastResponses.splice(index, 1);
-        context.setPastResponses(pastResponses);
-
+        context.deleteTracker(index);
         setConfirmDelete(false);
     };
 

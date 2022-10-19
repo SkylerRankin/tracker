@@ -17,12 +17,10 @@ export default function TrackerPage({ navigation, route }) {
     const onSave = () => {
         const response = {
             timestamp: (new Date()).getTime(),
-            value: responseValue,
+            value: responseValue + 1,
             notes: responseNotes
         };
-        const pastResponses = context.pastResponses;
-        pastResponses[trackerIndex].push(response);
-        context.setPastResponses(pastResponses);
+        context.addResponse(response);
         setResponseNotes("");
     }
 

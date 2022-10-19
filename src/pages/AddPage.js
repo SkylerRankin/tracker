@@ -18,10 +18,7 @@ export default function AddPage({navigation}) {
             segments: 10,
             invertAxis: invertAxis
         };
-        const pastResponses = context.pastResponses;
-        pastResponses.push([]);
-        context.setPastResponses(pastResponses);
-        context.setTrackers([...context.trackers, newTracker]);
+        context.addTracker(newTracker);
         navigation.navigate("Home");
     }
 

@@ -3,7 +3,7 @@ import dotIcon from '../../assets/images/dot.png';
 import checkIcon from '../../assets/images/check.png';
 import { graphColors } from "./Constants";
 
-export default function Tracker({navigation, tracker, selected, onPress, index}) {
+export default function Tracker({navigation, tracker, completed, selected, onPress, index}) {
     return (
         <TouchableOpacity
             onPress={onPress}
@@ -13,9 +13,9 @@ export default function Tracker({navigation, tracker, selected, onPress, index})
             <View style={styles.container}>
                 <Text style={styles.nameText}>{tracker.name}</Text>
                 {
-                    !tracker.completed && <Image style={[styles.reminderImage, styles.firstImageInRow]} source={dotIcon}/>
+                    !completed && <Image style={[styles.reminderImage, styles.firstImageInRow]} source={dotIcon}/>
                 }
-                <Image style={[styles.isSelectedImage, selected && { tintColor: graphColors[tracker.colorIndex] }, tracker.completed && styles.firstImageInRow]} source={checkIcon}/>
+                <Image style={[styles.isSelectedImage, selected && { tintColor: graphColors[tracker.colorIndex] }, completed && styles.firstImageInRow]} source={checkIcon}/>
             </View>
         </TouchableOpacity>
     );
@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         flexDirection: 'row',
         // backgroundColor: '#f2f2f2',
-        borderColor: '#349beb',
+        // borderColor: '#349beb',
         // borderWidth: 4,
         padding: 10,
         borderRadius: 10

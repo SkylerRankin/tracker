@@ -8,33 +8,38 @@ import DateAxis from '../components/DateAxis';
 import EditableTracker from '../components/EditableTracker';
 import ChartLineDate from '../components/ChartLineDate';
 import { deleteLocalStorage } from '../components/StorageUtil';
+import TrackerHeader from '../components/TrackerHeader';
+import EditTrackersHeader from '../components/EditTrackersHeader';
+import { isSameDay } from 'date-fns';
 
 export default function HomePage({navigation}) {
     
     const context = useContext(AppContext);
     const [ editTrackers, setEditTrackers ] = useState(false);
 
-    const onSelectTracker = i => {
-        if (context.selectedTrackers.includes(i)) {
-            context.setSelectedTrackers(context.selectedTrackers.filter(index => index !== i));
-        } else {
-            context.setSelectedTrackers([i, ...context.selectedTrackers]);
-        }
+    const onSelectTracker = trackerIndex => {
+        context.toggleSelectedTracker(trackerIndex);
     }
 
     const editableTrackersList = context.trackers.map((tracker, i) => (
         <EditableTracker key={i} tracker={tracker} index={i}/>
     ));
 
-    const trackersList = context.trackers.map((tracker, i) => (
-        <Tracker
-            key={i}
-            navigation={navigation}
-            index={i}
-            tracker={tracker}
-            selected={context.selectedTrackers.includes(i)}
-            onPress={() => onSelectTracker(i)}/>
-    ));
+    let trackersList = <Text style={styles.noTrackersText}>Press New to add a tracker.</Text>;
+    if (context.trackers.length > 0) {
+        trackersList = context.trackers.map((tracker, i) => {
+            const lastTimestamp = context.pastResponses[i][context.pastResponses[i].length - 1].timestamp;
+            const completed = isSameDay(lastTimestamp, new Date().getTime());
+            return (<Tracker
+                    key={i}
+                    navigation={navigation}
+                    index={i}
+                    tracker={tracker}
+                    completed={completed}
+                    selected={context.selectedTrackers.includes(i)}
+                    onPress={() => onSelectTracker(i)}/>)
+        }
+    )}
 
     return (
         <View style={styles.container}>
@@ -51,27 +56,9 @@ export default function HomePage({navigation}) {
             { context.usingChartLine ? <ChartLineDate/> : <DateAxis/> }
             {
                 editTrackers ?
-                <View style={styles.trackerHeader}>
-                    <Text style={styles.trackersText}>Edit trackers</Text>
-                    <View style={{marginLeft: "auto", flexDirection: "row"}}>
-                        <TouchableOpacity style={{marginRight: 20}} onPress={() => setEditTrackers(false)}>
-                            <Text style={styles.trackedEditText}>back</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
+                <EditTrackersHeader onBack={() => setEditTrackers(false)}/>
                 :
-                <View style={styles.trackerHeader}>
-                    <Text style={styles.trackersText}>Your trackers</Text>
-                    <View style={{marginLeft: "auto", flexDirection: "row"}}>
-                        <TouchableOpacity onPress={() => setEditTrackers(true)}>
-                            <Text style={styles.trackedEditText}>edit</Text>
-                        </TouchableOpacity>
-                        <Text style={{marginHorizontal: 10, color: "#777"}}>|</Text>
-                        <TouchableOpacity style={{marginRight: 20}} onPress={() => navigation.navigate('Add')}>
-                            <Text style={styles.newTrackerText}>new</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
+                <TrackerHeader onEdit={() => setEditTrackers(true)} onAdd={() => navigation.navigate("Add")}/>
             }
             <ScrollView style={styles.trackersView}>
                 { editTrackers ? editableTrackersList : trackersList }
@@ -151,5 +138,10 @@ const styles = StyleSheet.create({
     },
     trackersText: {
         fontStyle: 'italic'
+    },
+    noTrackersText: {
+        fontStyle: "italic",
+        color: "#777",
+        fontSize: 12
     }
 });

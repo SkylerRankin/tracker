@@ -26,13 +26,18 @@ const runStorageInitialization = async () => {
     };
 
     if (responsesFile.exists) {
-        data.pastResponses = await loadResponses();
+        const pastResponses = await loadResponses();
+        if (pastResponses !== null) {
+            data.pastResponses = await loadResponses();
+        }
     }
 
     if (trackersFile.exists) {
         const trackerData = await loadTrackers();
-        data.trackers = trackerData.trackers;
-        data.selectedTrackers = trackerData.selectedTrackers;
+        if (trackerData !== null) {
+            data.trackers = trackerData.trackers;
+            data.selectedTrackers = trackerData.selectedTrackers;
+        }
     }
 
     console.log(`runStorageInitialization latency: ${performance.now() - startTime}ms`);
@@ -45,8 +50,13 @@ const loadResponses = async () => {
     const responseFileData = await FileSystem.readAsStringAsync(responsesFilePath);
     console.log(`Loaded ${responseFileData.length} characters from ${responsesFilePath}.`);
 
-    const minResponseData = JSON.parse(responseFileData);
-    const results = minResponseData.map(responseSet => responseSet.map(response => ({ timestamp: response.t, value: response.v, notes: response.n })));
+    let results;
+    if (responseFileData.length === 0) {
+        results = null;
+    } else {
+        const minResponseData = JSON.parse(responseFileData);
+        results = minResponseData.map(responseSet => responseSet.map(response => ({ timestamp: response.t, value: response.v, notes: response.n })));    
+    }
 
     console.log(`loadResponses latency: ${performance.now() - startTime}ms`);
     return results;
@@ -57,7 +67,7 @@ const loadTrackers = async () => {
 
     const trackersFileData = await FileSystem.readAsStringAsync(trackersFilePath);
     console.log(`Loaded ${trackersFileData.length} characters from ${trackersFilePath}.`);
-    const results = JSON.parse(trackersFileData);
+    const results = trackersFileData.length === 0 ? null : JSON.parse(trackersFileData);
 
     console.log(`loadTrackers latency: ${performance.now() - startTime}ms`);
     return results;

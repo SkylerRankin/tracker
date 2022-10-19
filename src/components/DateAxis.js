@@ -1,8 +1,7 @@
-import { addDays, differenceInDays, getDate, getDay, getMonth } from "date-fns";
-import { useContext, useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from "react-native";
+import { addDays, differenceInDays, getDate, getMonth } from "date-fns";
+import { useContext } from "react";
+import { View, Text, StyleSheet, Dimensions } from "react-native";
 import AppContext from "./AppContext";
-import { graphTimeRanges } from "./Constants";
 import { getDateRange } from "./DataUtil";
 
 const pageWidth = Dimensions.get("window").width;
@@ -12,7 +11,7 @@ const labelWidth = axisWidth / xTicks;
 
 export default function DateAxis() {
     const context = useContext(AppContext);
-    const dateRange = getDateRange(context);
+    const dateRange = getDateRange(context.chartTimeScale, context.chartTimeOffset);
 
     const daysInRange = differenceInDays(dateRange.end, dateRange.start);
     const segmentSize = daysInRange / (xTicks - 1);
@@ -41,10 +40,13 @@ export default function DateAxis() {
 const styles = StyleSheet.create({
     container: {
         flexDirection: "row",
-        height: 35,
-        width: '100%'
+        height: 45,
+        width: '100%',
+        paddingTop: 10
     },
     label: {
-        textAlign: "center"
+        textAlign: "center",
+        color: "#777",
+        fontSize: 13
     }
 });
