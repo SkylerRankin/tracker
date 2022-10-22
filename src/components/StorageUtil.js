@@ -1,8 +1,10 @@
 import * as FileSystem from 'expo-file-system';
 
 const storageDirectory = `${FileSystem.documentDirectory}tracker_local_storage/`;
-const responsesFilePath = storageDirectory + "responses.json";
-const trackersFilePath = storageDirectory + "trackers.json";
+const saveFileName = "save.json";
+const maxSavedFiles = 3;
+const responsesJSONKey = "r";
+const trackersJSONKey = "t";
 
 const runStorageInitialization = async () => {
     const startTime = performance.now();
@@ -13,94 +15,75 @@ const runStorageInitialization = async () => {
         console.log(`Creating local storage directory at ${storageDirectory}.`);
     }
 
-    const responsesFile = await FileSystem.getInfoAsync(responsesFilePath);
-    const trackersFile = await FileSystem.getInfoAsync(trackersFilePath);
     let data = {
         pastResponses: [],
         trackers: [],
-        selectedTrackers: [],
-        savedFiles: {
-            responses: responsesFile.exists,
-            trackers: trackersFile.exists
-        }
+        selectedTrackers: []
     };
 
-    if (responsesFile.exists) {
-        const pastResponses = await loadResponses();
-        if (pastResponses !== null) {
-            data.pastResponses = await loadResponses();
-        }
-    }
-
-    if (trackersFile.exists) {
-        const trackerData = await loadTrackers();
-        if (trackerData !== null) {
-            data.trackers = trackerData.trackers;
-            data.selectedTrackers = trackerData.selectedTrackers;
-        }
+    const saveFiles = await FileSystem.readDirectoryAsync(storageDirectory);
+    if (saveFiles.length > 0) {
+        const loadedData = await loadData(saveFiles);
+        data.pastResponses = loadedData.pastResponses;
+        data.trackers = loadedData.trackerData.trackers;
+        data.selectedTrackers = loadedData.trackerData.selectedTrackers;
     }
 
     console.log(`runStorageInitialization latency: ${performance.now() - startTime}ms`);
     return data;
 }
 
-const loadResponses = async () => {
-    const startTime = performance.now();
+const loadData = async (files) => {
+    files.sort();
+    files.reverse();
 
-    const responseFileData = await FileSystem.readAsStringAsync(responsesFilePath);
-    console.log(`Loaded ${responseFileData.length} characters from ${responsesFilePath}.`);
+    const fileData = await FileSystem.readAsStringAsync(`${storageDirectory}${files[0]}`);
+    console.log(`Loaded ${fileData.length} characters from ${files[0]}.`);
+    if (fileData.length === 0) return null;
 
-    let results;
-    if (responseFileData.length === 0) {
-        results = null;
-    } else {
-        const minResponseData = JSON.parse(responseFileData);
-        results = minResponseData.map(responseSet => responseSet.map(response => ({ timestamp: response.t, value: response.v, notes: response.n })));    
+    try {
+        const fileJson = JSON.parse(fileData);
+        const minResponseData = fileJson[responsesJSONKey];
+        const pastResponses = minResponseData.map(responseSet => responseSet.map(response => ({ timestamp: response.t, value: response.v, notes: response.n })));
+        const trackerData = fileJson[trackersJSONKey];
+        return { pastResponses, trackerData };
+    } catch (e) {
+        return null;
     }
-
-    console.log(`loadResponses latency: ${performance.now() - startTime}ms`);
-    return results;
-}
-
-const loadTrackers = async () => {
-    const startTime = performance.now();
-
-    const trackersFileData = await FileSystem.readAsStringAsync(trackersFilePath);
-    console.log(`Loaded ${trackersFileData.length} characters from ${trackersFilePath}.`);
-    const results = trackersFileData.length === 0 ? null : JSON.parse(trackersFileData);
-
-    console.log(`loadTrackers latency: ${performance.now() - startTime}ms`);
-    return results;
 }
 
 const writeAppData = async (context) => {
     const startTime = performance.now();
 
-    if (context.savedFiles.responses) {
-        await FileSystem.deleteAsync(responsesFilePath);
-    }
-
-    if (context.savedFiles.trackers) {
-        await FileSystem.deleteAsync(trackersFilePath);
-    }
-
-    const pastResponsesText = JSON.stringify(context.pastResponses.map(responseSet =>
+    const dataToSave = {};
+    dataToSave[responsesJSONKey] = context.pastResponses.map(responseSet =>
         responseSet.map(response => ({
             t: response.timestamp,
             v: response.value,
             n: response.notes
         })
-    )));
-    await FileSystem.writeAsStringAsync(responsesFilePath, pastResponsesText);
-    
-    const trackerData = {
+    ));
+    dataToSave[trackersJSONKey] = {
         trackers: context.trackers,
         selectedTrackers: context.selectedTrackers
     };
-    const trackerText = JSON.stringify(trackerData);
-    await FileSystem.writeAsStringAsync(trackersFilePath, trackerText);
 
-    console.log(`writeAppData latency: ${performance.now() - startTime}ms`);
+    const dataText = JSON.stringify(dataToSave);
+    const fileName = `${(new Date().getTime())}${saveFileName}`;
+    const filePath = `${storageDirectory}${fileName}`;
+    await FileSystem.writeAsStringAsync(filePath, dataText);
+
+    const saveFiles = await FileSystem.readDirectoryAsync(storageDirectory);
+    if (saveFiles.length > maxSavedFiles) {
+        saveFiles.sort();
+        saveFiles.reverse();
+        for (let i = maxSavedFiles; i < saveFiles.length; i++) {
+            await FileSystem.deleteAsync(`${storageDirectory}${saveFiles[i]}`);
+            console.log(`Deleted old save file ${storageDirectory}${saveFiles[i]}.`);
+        }
+    }
+
+    console.log(`writeAppData latency: ${performance.now() - startTime}ms. ${(dataText.length / 1024).toFixed(3)} kb written to ${fileName}.`);
 }
 
 const deleteLocalStorage = async () => {
@@ -109,4 +92,4 @@ const deleteLocalStorage = async () => {
     console.log(`Local storage directory exists after deletion: ${response.exists}.`);
 }
 
-export { runStorageInitialization, loadResponses, loadTrackers, writeAppData, deleteLocalStorage }
+export { runStorageInitialization, writeAppData, deleteLocalStorage }

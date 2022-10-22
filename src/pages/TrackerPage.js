@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Dimensions, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import AppContext from '../components/AppContext';
+import { invertValue } from '../components/DataUtil';
 import PastResponse from '../components/PastResponse';
 import ScrollableSelector from '../components/ScrollableSelector';
 
@@ -15,13 +16,15 @@ export default function TrackerPage({ navigation, route }) {
     const tracker = context.trackers[trackerIndex];
 
     const onSave = () => {
+        const value = tracker.invertAxis ? invertValue(responseValue + 1) : responseValue + 1;
         const response = {
             timestamp: (new Date()).getTime(),
-            value: responseValue + 1,
+            value,
             notes: responseNotes
         };
-        context.addResponse(response);
+        context.addResponse(trackerIndex, response);
         setResponseNotes("");
+        navigation.pop();
     }
 
     const pastResponses = context.pastResponses[trackerIndex].length <= maxResponsesInList ?

@@ -1,16 +1,15 @@
 import React, { useContext, useState } from 'react';
 import { Dimensions, StyleSheet, Text, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-
 import { LineChart } from 'react-native-wagmi-charts';
 import AppContext from './AppContext';
 import { graphColors } from './Constants';
-import { getDatasetCacheKey, trimAndBufferDataset } from './DataUtil';
+import { getChartDatasetCacheKey, invertValue } from './DataUtil';
 
 const pageWidth = Dimensions.get("window").width;
 const chartWidth = pageWidth - 30 * 2;
 const chartHeight = 250;
-const chartLineWidthByScale = [8, 4, 1];
+const chartLineWidthByScale = [6, 6, 6];
 
 export default function TrackingChart() {
     console.log("------------------ TrackingChart render() ---------------------------");
@@ -23,34 +22,32 @@ export default function TrackingChart() {
     }
 
     const datasets = [];
-    const chartTimeScale = context.chartTimeScale;
 
     const sortedTrackedIndices = context.selectedTrackers;
     sortedTrackedIndices.sort().reverse();
     sortedTrackedIndices.forEach(trackerIndex => {
-        const tracker = context.trackers[trackerIndex];
-        const cacheKey = getDatasetCacheKey(context.chartTimeScale, context.aggregationMode, trackerIndex);
-        const fullData = context.datasetCache[cacheKey];
-        const finalData = trimAndBufferDataset(fullData, context.chartTimeScale, context.chartTimeOffset);
-        datasets.push({
-            dataset: finalData,
-            color: graphColors[tracker.colorIndex],
-            trackerIndex
-        });
-        console.log(`Using cached dataset for time scale ${chartTimeScale}, tracker ${trackerIndex}. ${fullData.length} items, ${finalData.length} items after trim and buffer.`);
+        const cacheKey = getChartDatasetCacheKey(trackerIndex, context.chartTimeOffset, context.chartTimeScale, context.aggregationMode);
+        if (!Object.keys(context.chartDatasetCache).includes(cacheKey)) {
+            console.log(`Skipping chart cache key ${cacheKey}: not present in dataset cache.`);
+            return;
+        }
+        const data = context.chartDatasetCache[cacheKey].data;
+        if (data.length > 0) {
+            datasets.push({
+                dataset: data,
+                color: graphColors[context.trackers[trackerIndex].colorIndex],
+                trackerIndex
+            });
+        } else {
+            console.log(`Skipping chart cache key ${cacheKey}: zero length dataset.`);
+        }
     });
-
-    // Ensure datasets all have the same length
-    const datasetLengths = datasets.map(d => d.dataset.length);
-    const consistentLengths = datasetLengths.filter(l => l !== datasetLengths[0]).length === 0;
-    if (!consistentLengths) {
-        const maxLength = datasetLengths.reduce((prev, curr) => Math.max(prev, curr), -1);
-        console.log(`Inconsistent dataset lengths: ${datasetLengths}`);
-    }
 
     const charts = [];
     datasets.forEach((data, i) => {
-        const currentValue = currentIndex >= 0 && data.dataset.length > currentIndex ? data.dataset[currentIndex].value : -1;
+        const invertAxis = context.trackers[data.trackerIndex].invertAxis;
+        let currentValue = currentIndex >= 0 && data.dataset.length > currentIndex ? data.dataset[currentIndex].value : -1;
+        if (invertAxis && currentValue > -1) currentValue = invertValue(currentValue);
         const toolTip = currentValue >= 0 ?
             <LineChart.Tooltip>
                 <Text style={[tooltipStyles.tooltip, { backgroundColor: data.color }]}>

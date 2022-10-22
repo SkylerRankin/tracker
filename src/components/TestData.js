@@ -11,23 +11,23 @@ export const getTestData = () => {
 }
 
 export const getPastThreeWeekTestData = () => {
-    return getResponses(21);
+    return getResponses(21, 0);
 }
 
 export const getPastThreeWeekGappedTestData = () => {
-    const threeWeeks = getResponses(21);
+    const threeWeeks = getResponses(21, 0);
     threeWeeks.splice(7, 10);
     return threeWeeks;
 }
 
 export const getLargeTestData = () => {
-    return getResponses(123);
+    return getResponses(500, 0);
 }
 
-const getResponses = (count) => {
+const getResponses = (count, offsetFromToday) => {
     const today = new Date();
     const responses = [];
-    for (let i = count - 2; i >= 1; i--) {
+    for (let i = count + offsetFromToday - 1; i >= offsetFromToday; i--) {
         responses.push({
             timestamp: subDays(today, i).getTime(),
             value: Math.floor(Math.random() * 10) + 1,

@@ -10,8 +10,8 @@ import SafeViewAndroid from './src/styles/SafeViewAndroid';
 import { Component } from 'react';
 import AppContext from './src/components/AppContext';
 import { getLargeTestData, getPastThreeWeekGappedTestData, getPastThreeWeekTestData, getTestData } from './src/components/TestData';
-import { runStorageInitialization, writeAppData } from './src/components/StorageUtil';
-import { aggregationModes, buildFullDatasetCache, getDatasetCacheKey, getProcessedSequence } from './src/components/DataUtil';
+import { deleteLocalStorage, runStorageInitialization, writeAppData } from './src/components/StorageUtil';
+import { addConfigToChartDatasetCache, buildFullDatasetCache } from './src/components/DataUtil';
 
 /**
 
@@ -57,7 +57,8 @@ export default class App extends Component {
             selectedTrackers: [],
             aggregationMode: 0,
             savedFiles: null,
-            datasetCache: {}
+            fullDatasetCache: {},
+            chartDatasetCache: {}
         };
     }
 
@@ -65,22 +66,30 @@ export default class App extends Component {
         console.log("Initializing app");
         // Use an arrow function for listener to ensure onAppStateChange has the scope access to this.state.
         this.appStateSubscription = AppState.addEventListener("change", (nextAppState) => this.onAppStateChange(nextAppState));
+        // await deleteLocalStorage();
         const loadedData = await runStorageInitialization();
 
         // FOR DEBUGGING!!!!!!!!!!!
         if (loadedData.trackers.length === 0) {
             console.log("!!!!!!!!!!!! Loading test data");
-            loadedData.pastResponses = [getPastThreeWeekTestData()];
-            loadedData.trackers = [{ name: "test tracker", segments: 10, colorIndex: 0, invertAxis: false }];
-            loadedData.selectedTrackers = [0];
+            loadedData.pastResponses = [
+                getPastThreeWeekTestData(),
+                getLargeTestData()
+            ];
+            loadedData.trackers = [
+                { name: "three weeks", segments: 10, colorIndex: 0, invertAxis: true },
+                { name: "500 days", segments: 10, colorIndex: 1, invertAxis: false }
+            ];
+            loadedData.selectedTrackers = [0, 1];
         }
 
         // Initialize the dataset cache for each time scale - aggregation - tracker configuration.
-        const datasetCache = loadedData.trackers.length === 0 ? {} :
+        const fullDatasetCache = loadedData.trackers.length === 0 ? {} :
             buildFullDatasetCache(loadedData.pastResponses, loadedData.trackers.length);
 
-        console.log("Dataset cache keys:");
-        console.log(Object.keys(datasetCache));
+        // Initialize the chart dataset cache for each loaded tracker.
+        const chartDatasetCache = addConfigToChartDatasetCache({}, fullDatasetCache, loadedData.trackers.length,
+            this.state.chartTimeOffset, this.state.chartTimeScale, this.state.aggregationMode);
 
         this.setState({
             ...prevState,
@@ -89,9 +98,9 @@ export default class App extends Component {
             trackers: loadedData.trackers,
             selectedTrackers: loadedData.selectedTrackers,
             savedFiles: loadedData.savedFiles,
-            datasetCache
+            fullDatasetCache,
+            chartDatasetCache
         });
-        console.log("Finished setting initial state from disk.");
     }
 
     componentWillUnmount() {
@@ -111,6 +120,7 @@ export default class App extends Component {
                 clearTimeout(this.saveChangesTimer);
                 this.saveChangesTimer = null;
             }
+            console.log(`Triggering writeAppData due to state change to ${nextAppState}.`);
             await writeAppData(this.state);
         }
         this.setState({ ...this.state, appState: nextAppState });
@@ -126,21 +136,36 @@ export default class App extends Component {
     render() {
         const appContext = {
             dataInitialized: this.state.dataInitialized,
+
             chartTimeScale: this.state.chartTimeScale,
-            setChartTimeScale: newChartTimeScale => this.setState({ chartTimeScale: newChartTimeScale }),
+            setChartTimeScale: newChartTimeScale => {
+                const newChartTimeOffset = 0;
+                const newChartDatasetCache = addConfigToChartDatasetCache(this.state.chartDatasetCache, this.state.fullDatasetCache, this.state.trackers.length,
+                    newChartTimeOffset, newChartTimeScale, this.state.aggregationMode);
+                this.setState({ chartTimeScale: newChartTimeScale, chartTimeOffset: newChartTimeOffset, chartDatasetCache: newChartDatasetCache });
+            },
+
             chartTimeOffset: this.state.chartTimeOffset,
-            setChartTimeOffset: newChartTimeOffset => this.setState({ chartTimeOffset: newChartTimeOffset }),
+            setChartTimeOffset: newChartTimeOffset => {
+                const newChartDatasetCache = addConfigToChartDatasetCache(this.state.chartDatasetCache, this.state.fullDatasetCache, this.state.trackers.length,
+                    newChartTimeOffset, this.state.chartTimeScale, this.state.aggregationMode);
+                this.setState({ chartTimeOffset: newChartTimeOffset, chartDatasetCache: newChartDatasetCache })
+            },
 
             pastResponses: this.state.pastResponses,
-            addResponse: newResponse => {
+            addResponse: (trackerIndex, newResponse) => {
                 const newPastResponses = this.state.pastResponses.map(trackerResponseSet => trackerResponseSet.map(response => Object.assign({}, response)));
-                newPastResponses.push(newResponse);
+                newPastResponses[trackerIndex].push(newResponse);
 
-                const newDatasetCache = buildFullDatasetCache(newPastResponses, newTrackers.length);
+                const newFullDatasetCache = buildFullDatasetCache(newPastResponses, this.state.trackers.length);
+                const newChartDatasetCache = addConfigToChartDatasetCache({}, newFullDatasetCache, this.state.trackers.length,
+                    this.state.chartTimeOffset, this.state.chartTimeScale, this.state.aggregationMode);
 
+                this.onSavedDataUpdate();
                 this.setState({
                     pastResponses: newPastResponses,
-                    datasetCache: newDatasetCache
+                    fullDatasetCache: newFullDatasetCache,
+                    chartDatasetCache: newChartDatasetCache
                 });
             },
 
@@ -169,14 +194,18 @@ export default class App extends Component {
                 });
 
                 // Rebuild the dataset cache.
-                const newDatasetCache = newTrackers.length === 0 ? {} :
+                const newFullDatasetCache = newTrackers.length === 0 ? {} :
                     buildFullDatasetCache(newPastResponses, newTrackers.length);
+                const newChartDatasetCache = addConfigToChartDatasetCache({}, newFullDatasetCache, newTrackers.length,
+                    this.state.chartTimeOffset, this.state.chartTimeScale, this.state.aggregationMode);
 
+                this.onSavedDataUpdate();
                 this.setState({
                     selectedTrackers: newSelectedTrackers,
                     trackers: newTrackers,
                     pastResponses: newPastResponses,
-                    datasetCache: newDatasetCache
+                    fullDatasetCache: newFullDatasetCache,
+                    chartDatasetCache: newChartDatasetCache
                 });
             },
             moveTrackerPosition: (trackerIndex, offset) => {
@@ -190,23 +219,34 @@ export default class App extends Component {
                 const newPastResponses = this.state.pastResponses.map(trackerResponseSet => trackerResponseSet.map(response => Object.assign({}, response)));
                 [newPastResponses[trackerIndex], newPastResponses[trackerIndex + offset]] = [newPastResponses[trackerIndex + offset], newPastResponses[trackerIndex]];
 
-                const newDatasetCache = buildFullDatasetCache(newPastResponses, newTrackers.length);
+                const newFullDatasetCache = buildFullDatasetCache(newPastResponses, newTrackers.length);
+                const newChartDatasetCache = addConfigToChartDatasetCache({}, newFullDatasetCache, newTrackers.length,
+                    this.state.chartTimeOffset, this.state.chartTimeScale, this.state.aggregationMode);
 
+                this.onSavedDataUpdate();
                 this.setState({
                     selectedTrackers: newSelectedTrackers,
                     trackers: newTrackers,
                     pastResponses: newPastResponses,
-                    datasetCache: newDatasetCache
+                    fullDatasetCache: newFullDatasetCache,
+                    chartDatasetCache: newChartDatasetCache
                 });
             },
             addTracker: tracker => {
                 const newTrackers = [tracker, ...this.state.trackers.map(previousTracker => Object.assign({}, previousTracker))];
-                const newPastResponses = this.state.pastResponses.map(trackerResponseSet => trackerResponseSet.map(response => Object.assign({}, response)));
-                const newDatasetCache = buildFullDatasetCache(newPastResponses, newTrackers.length);
+                const newSelectedTrackers = [0, ...this.state.selectedTrackers.map(i => i + 1)];
+                const newPastResponses = [[], ...this.state.pastResponses.map(trackerResponseSet => trackerResponseSet.map(response => Object.assign({}, response)))];
+                const newFullDatasetCache = buildFullDatasetCache(newPastResponses, newTrackers.length);
+                const newChartDatasetCache = addConfigToChartDatasetCache({}, newFullDatasetCache, newTrackers.length,
+                    this.state.chartTimeOffset, this.state.chartTimeScale, this.state.aggregationMode);
+
+                this.onSavedDataUpdate();
                 this.setState({
                     trackers: newTrackers,
+                    selectedTrackers: newSelectedTrackers,
                     pastResponses: newPastResponses,
-                    datasetCache: newDatasetCache
+                    fullDatasetCache: newFullDatasetCache,
+                    chartDatasetCache: newChartDatasetCache
                 });
             },
 
@@ -218,13 +258,23 @@ export default class App extends Component {
                 } else {
                     newSelectedTrackers = [trackerIndex, ...this.state.selectedTrackers];
                 }
+
+                this.onSavedDataUpdate();
                 this.setState({ selectedTrackers: newSelectedTrackers });
             },
 
             aggregationMode: this.state.aggregationMode,
-            setAggregationMode: newAggregationMode => this.setState({ aggregationMode: newAggregationMode }),
+            setAggregationMode: newAggregationMode => {
+                const newChartDatasetCache = addConfigToChartDatasetCache(this.state.chartDatasetCache, this.state.fullDatasetCache, this.state.trackers.length,
+                    this.state.chartTimeOffset, this.state.chartTimeScale, newAggregationMode);
+                this.setState({
+                    aggregationMode: newAggregationMode,
+                    chartDatasetCache: newChartDatasetCache
+                });
+            },
             savedFiles: this.state.savedFiles,
-            datasetCache: this.state.datasetCache
+            fullDatasetCache: this.state.fullDatasetCache,
+            chartDatasetCache: this.state.chartDatasetCache
         };
 
         return (

@@ -21,3 +21,10 @@ export const graphTimeRanges = {
 }
 
 export const aggregationModes = ["Avg", "Min", "Max"];
+export const aggregationModeIndices = { avg: 0, min: 1, max: 2 };
+
+export const maxChartDatasetCacheSizePerTracker = 10;
+
+export const approximateDaysPerMonth = 30;
+export const approximateDaysPerYear = approximateDaysPerMonth * 12;
+export const chartTimeScales = { week: 0, month: 1, year: 2 };

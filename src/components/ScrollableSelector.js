@@ -57,8 +57,6 @@ export default function ScrollableSelector({segments, responseValue, setResponse
         const scrollFraction = Math.min(Math.max(value / maxScroll, 0), 1);
         const newSelectedIndex = getCenterIndex(scrollFraction, segments);
         if (newSelectedIndex !== responseValue) {
-            // TODO play audio here
-            console.log('new selected index ' + newSelectedIndex);
             setResponseValue(newSelectedIndex);
         }
     }

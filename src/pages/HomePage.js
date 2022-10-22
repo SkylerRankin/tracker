@@ -10,7 +10,7 @@ import ChartLineDate from '../components/ChartLineDate';
 import { deleteLocalStorage } from '../components/StorageUtil';
 import TrackerHeader from '../components/TrackerHeader';
 import EditTrackersHeader from '../components/EditTrackersHeader';
-import { isSameDay } from 'date-fns';
+import { isSameDay, subYears } from 'date-fns';
 
 export default function HomePage({navigation}) {
     
@@ -28,7 +28,9 @@ export default function HomePage({navigation}) {
     let trackersList = <Text style={styles.noTrackersText}>Press New to add a tracker.</Text>;
     if (context.trackers.length > 0) {
         trackersList = context.trackers.map((tracker, i) => {
-            const lastTimestamp = context.pastResponses[i][context.pastResponses[i].length - 1].timestamp;
+            const lastTimestamp = context.pastResponses[i].length === 0 ?
+                subYears(new Date(), 1) : // If no responses, set the last timestamp to some date that is not today.
+                context.pastResponses[i][context.pastResponses[i].length - 1].timestamp;
             const completed = isSameDay(lastTimestamp, new Date().getTime());
             return (<Tracker
                     key={i}
