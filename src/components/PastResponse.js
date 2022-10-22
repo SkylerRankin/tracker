@@ -13,10 +13,9 @@ export default function PastResponse({response}) {
     const maxNotePreview = 20;
     let notesText = "";
     if (hasNote) {
-        notesText = response.notes;
-        if (response.notes.length > maxNotePreview) {
-            const notesProcessed = response.notes.replace("/\n/g", " ");
-            notesText = notesProcessed.substring(0, Math.min(response.notes.length - 3, maxNotePreview)) + "...";
+        notesText = response.notes.replace("/\n/g", " ");
+        if (notesText.length > maxNotePreview) {
+            notesText = notesText.substring(0, Math.min(notesText.length - 3, maxNotePreview)) + "...";
         }
     }
     return (

@@ -74,7 +74,6 @@ const styles = StyleSheet.create({
         marginBottom: 40
     },
     responseText: {
-        fontStyle: "italic",
         marginBottom: 20
     },
     notesInput: {

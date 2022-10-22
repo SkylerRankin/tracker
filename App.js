@@ -2,7 +2,6 @@ import { SafeAreaView, StyleSheet, AppState } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import HomePage from './src/pages/HomePage';
 import AddPage from './src/pages/AddPage';
-import ResponsePage from './src/pages/ResponsePage';
 import TrackerPage from './src/pages/TrackerPage';
 import StartPage from './src/pages/StartPage';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -10,7 +9,7 @@ import SafeViewAndroid from './src/styles/SafeViewAndroid';
 import { Component } from 'react';
 import AppContext from './src/components/AppContext';
 import { getLargeTestData, getPastThreeWeekGappedTestData, getPastThreeWeekTestData, getTestData } from './src/components/TestData';
-import { deleteLocalStorage, runStorageInitialization, writeAppData } from './src/components/StorageUtil';
+import { runStorageInitialization, writeAppData } from './src/components/StorageUtil';
 import { addConfigToChartDatasetCache, buildFullDatasetCache } from './src/components/DataUtil';
 
 /**
@@ -284,7 +283,6 @@ export default class App extends Component {
                             <stack.Screen name="Start" component={StartPage} options={{ headerShown: false }} />
                             <stack.Screen name="Home" component={HomePage} options={{ headerShown: false }} />
                             <stack.Screen name="Add" component={AddPage} options={{ headerShown: false }} />
-                            <stack.Screen name="Response" component={ResponsePage} options={{ headerShown: false }} />
                             <stack.Screen name="Trackers" component={TrackerPage} options={{ headerShown: false }} />
                         </stack.Navigator>
                     </NavigationContainer>
