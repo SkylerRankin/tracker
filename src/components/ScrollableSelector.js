@@ -69,7 +69,9 @@ export default function ScrollableSelector({segments, responseValue, setResponse
                 <ScrollView
                     horizontal={true}
                     showsHorizontalScrollIndicator={false}
-                    onScroll={onScrolled}>
+                    onScroll={onScrolled}
+                    // https://reactnative.dev/docs/scrollview.html#scrolleventthrottle-ios
+                    scrollEventThrottle={16}>
                     { scrollSegments }
                 </ScrollView>
             </View>

@@ -177,10 +177,9 @@ export default class App extends Component {
                     .map(i => i > trackerIndex ? i - 1 : i);
 
                 // Remove the tracker index from the trackers array.
-                const newTrackers = this.state.trackers.map((tracker, i) => {
-                    if (i === trackerIndex) return;
-                    return Object.assign({}, tracker);
-                });
+                const newTrackers = this.state.trackers
+                    .filter((_, i) => i !== trackerIndex)
+                    .map(tracker => Object.assign({}, tracker));
 
                 // Remove the responses for this tracker.
                 const newPastResponses = [];

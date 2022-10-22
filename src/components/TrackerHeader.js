@@ -41,7 +41,8 @@ const styles = StyleSheet.create({
         height: 35,
         width: '100%',
         backgroundColor: '#eee',
-        borderRadius: 10
+        borderRadius: 10,
+        alignItems: "center"
     },
     rangesContainer: {
         flexDirection: "row",
@@ -64,11 +65,11 @@ const styles = StyleSheet.create({
     },
     text: {
         color: "#777",
-        marginLeft: 10,
-        textAlignVertical: "center"
+        marginLeft: 10
     },
     button: {
         width: 70,
+        height: 29,
         alignItems: "center",
         justifyContent: "center",
         borderRadius: 8,

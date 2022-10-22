@@ -11,9 +11,14 @@ export default function PastResponse({response}) {
     const [expanded, setExpanded] = useState(false);
     const hasNote = response.notes && response.notes.length > 0;
     const maxNotePreview = 20;
-    const notesText = hasNote ?
-        (response.notes.length > maxNotePreview ? response.notes.substring(0, Math.min(response.notes.length - 3, maxNotePreview)) + "..." : response.notes)
-        : "";
+    let notesText = "";
+    if (hasNote) {
+        notesText = response.notes;
+        if (response.notes.length > maxNotePreview) {
+            const notesProcessed = response.notes.replace("/\n/g", " ");
+            notesText = notesProcessed.substring(0, Math.min(response.notes.length - 3, maxNotePreview)) + "...";
+        }
+    }
     return (
         <TouchableOpacity
             style={{marginBottom: 15}}
