@@ -304,7 +304,7 @@ const buildFullDatasetCache = (pastResponsesPerIndex, trackerCount) => {
  * used in the TrackingChart component. Recently used arrays are saved so that they can quickly be reused instead of
  * recalculated.
  */
-const addConfigToChartDatasetCache = (previousCache, fullDatasetCache, trackerCount, chartTimeOffset, chartTimeScaleIndex, aggregationModeIndex) => {
+const addConfigToChartDatasetCache = (previousCache, fullDatasetCache, trackers, chartTimeOffset, chartTimeScaleIndex, aggregationModeIndex) => {
     const newCache = {};
 
     // All trackers are updated for each config, so if the first tracker is already present, there are no updates to make.
@@ -312,7 +312,7 @@ const addConfigToChartDatasetCache = (previousCache, fullDatasetCache, trackerCo
         return previousCache;
     }
 
-    for (let trackerIndex = 0; trackerIndex < trackerCount; trackerIndex++) {
+    for (let trackerIndex = 0; trackerIndex < trackers.length; trackerIndex++) {
         const newChartKey = getChartDatasetCacheKey(trackerIndex, chartTimeOffset, chartTimeScaleIndex, aggregationModeIndex);
         const currentCacheSizeForTracker = Object.keys(previousCache).filter(k => k.startsWith(`tracker${trackerIndex}-`)).length;
         if (currentCacheSizeForTracker >= maxChartDatasetCacheSizePerTracker) {
@@ -341,6 +341,12 @@ const addConfigToChartDatasetCache = (previousCache, fullDatasetCache, trackerCo
         // Add the new value to the new cache.
         const fullDatasetKey = getFullDatasetCacheKey(chartTimeScaleIndex, aggregationModeIndex, trackerIndex);
         const data = trimAndBufferDataset(fullDatasetCache[fullDatasetKey], chartTimeScaleIndex, chartTimeOffset);
+        if (trackers[trackerIndex].invertAxis) {
+            for (let i = 0; i < data.length; i++) {
+                data[i].value = invertValue(data[i].value);
+            }
+        }
+
         newCache[newChartKey] = {
             timestamp: new Date().getTime(),
             data
@@ -348,11 +354,11 @@ const addConfigToChartDatasetCache = (previousCache, fullDatasetCache, trackerCo
         console.log(`Added key ${newChartKey} to chart cache. data length = ${data.length}.`);
     }
 
-    console.log(`Finished cache update. New size = ${Object.keys(newCache).length} for ${trackerCount} trackers.`);
+    console.log(`Finished cache update. New size = ${Object.keys(newCache).length} for ${trackers.length} trackers.`);
     return newCache;
 }
 
-const invertValue = v => 10 - v + 1;
+const invertValue = v => v === -1 ? v : 10 - v + 1;
 
 export { getDateRange, fillMissingDays, aggregateSegmentOfResponses, addStartBufferDays, addEndBufferDays,
     getProcessedSequence, getFullDatasetCacheKey, buildFullDatasetCache, getChartDatasetCacheKey,

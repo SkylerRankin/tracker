@@ -16,10 +16,9 @@ export default function TrackerPage({ navigation, route }) {
     const tracker = context.trackers[trackerIndex];
 
     const onSave = () => {
-        const value = tracker.invertAxis ? invertValue(responseValue + 1) : responseValue + 1;
         const response = {
             timestamp: (new Date()).getTime(),
-            value,
+            value: responseValue + 1,
             notes: responseNotes
         };
         context.addResponse(trackerIndex, response);

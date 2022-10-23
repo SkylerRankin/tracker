@@ -35,7 +35,7 @@ export default function TrackingChart() {
         if (data.length > 0) {
             datasets.push({
                 dataset: data,
-                color: graphColors[context.trackers[trackerIndex].colorIndex],
+                color: context.trackers[trackerIndex].color,
                 trackerIndex
             });
         } else {

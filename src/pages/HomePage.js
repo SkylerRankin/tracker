@@ -21,8 +21,13 @@ export default function HomePage({navigation}) {
         context.toggleSelectedTracker(trackerIndex);
     }
 
+    const onEditTracker = trackerIndex => {
+        setEditTrackers(false);
+        navigation.navigate("Add", { editExisting: true, existingTrackerIndex: trackerIndex });
+    }
+
     const editableTrackersList = context.trackers.map((tracker, i) => (
-        <EditableTracker key={i} tracker={tracker} index={i}/>
+        <EditableTracker key={i} tracker={tracker} index={i} onEditTracker={onEditTracker}/>
     ));
 
     let trackersList = <Text style={styles.noTrackersText}>Press New to add a tracker.</Text>;
@@ -60,7 +65,7 @@ export default function HomePage({navigation}) {
                 editTrackers ?
                 <EditTrackersHeader onBack={() => setEditTrackers(false)}/>
                 :
-                <TrackerHeader onEdit={() => setEditTrackers(true)} onAdd={() => navigation.navigate("Add")}/>
+                <TrackerHeader onEdit={() => setEditTrackers(true)} onAdd={() => navigation.navigate("Add", { editExisting: false })}/>
             }
             <ScrollView style={styles.trackersView}>
                 { editTrackers ? editableTrackersList : trackersList }
@@ -103,7 +108,7 @@ const styles = StyleSheet.create({
         padding: 20,
         flex: 1,
         marginBottom: 10,
-        marginTop: 20
+        marginTop: 10
     },
     timeArea: {
         marginBottom: 50,
