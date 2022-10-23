@@ -52,9 +52,9 @@ export default function HomePage({navigation}) {
         <View style={styles.container}>
             <View style={styles.header}>
                 <Text style={styles.title}>daily tracker</Text>
-                {/* <TouchableOpacity onPress={async () => await deleteLocalStorage()}>
+                <TouchableOpacity onPress={async () => await deleteLocalStorage()}>
                     <Text>Delete local data</Text>
-                </TouchableOpacity> */}
+                </TouchableOpacity>
             </View>
             <View style={{marginBottom: 20}}><RangeSelector/></View>
             <View style={{ paddingHorizontal: 20 }}>
