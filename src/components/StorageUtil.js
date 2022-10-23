@@ -1,4 +1,5 @@
 import * as FileSystem from 'expo-file-system';
+import { saveFileVersion } from './Constants';
 
 const storageDirectory = `${FileSystem.documentDirectory}tracker_local_storage/`;
 const saveFileName = "save.json";
@@ -55,7 +56,7 @@ const loadData = async (files) => {
 const writeAppData = async (context) => {
     const startTime = performance.now();
 
-    const dataToSave = {};
+    const dataToSave = { version: saveFileVersion };
     dataToSave[responsesJSONKey] = context.pastResponses.map(responseSet =>
         responseSet.map(response => ({
             t: response.timestamp,
@@ -69,7 +70,7 @@ const writeAppData = async (context) => {
     };
 
     const dataText = JSON.stringify(dataToSave);
-    const fileName = `${(new Date().getTime())}${saveFileName}`;
+    const fileName = `${(new Date().getTime())}_${saveFileVersion}_${saveFileName}`;
     const filePath = `${storageDirectory}${fileName}`;
     await FileSystem.writeAsStringAsync(filePath, dataText);
 

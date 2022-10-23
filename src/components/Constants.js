@@ -24,3 +24,5 @@ export const maxChartDatasetCacheSizePerTracker = 10;
 export const approximateDaysPerMonth = 30;
 export const approximateDaysPerYear = approximateDaysPerMonth * 12;
 export const chartTimeScales = { week: 0, month: 1, year: 2 };
+
+export const saveFileVersion = 1;
