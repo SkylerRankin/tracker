@@ -10,10 +10,10 @@ const makeDateString = timestamp => {
 export default function PastResponse({response}) {
     const [expanded, setExpanded] = useState(false);
     const hasNote = response.notes && response.notes.length > 0;
-    const maxNotePreview = 20;
+    const maxNotePreview = 15;
     let notesText = "";
     if (hasNote) {
-        notesText = response.notes.replace("/\n/g", " ");
+        notesText = response.notes.replace(new RegExp("(\r\n|\r|\n)", "g"), " ");
         if (notesText.length > maxNotePreview) {
             notesText = notesText.substring(0, Math.min(notesText.length - 3, maxNotePreview)) + "...";
         }

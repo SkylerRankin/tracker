@@ -83,15 +83,15 @@ export default function AddPage({navigation, route}) {
             </View>
 
             <Text style={{marginTop: 30, marginBottom: 20}}>Invert y-axis in chart...</Text>
-            <TouchableOpacity onPress={() => { setInvertAxis(!invertAxis); }}>
-                <Text style={[styles.invertButton, invertAxis && styles.invertButtonSelected]}>
+            <TouchableOpacity onPress={() => { setInvertAxis(!invertAxis); }} style={[styles.invertButton, invertAxis && styles.invertButtonSelected]}>
+                <Text style={{textAlign: "center"}}>
                     {invertAxis ? "Yes" : "No"}
                 </Text>
             </TouchableOpacity>
             {
                 editExistingTracker && !confirmDelete &&
-                    <TouchableOpacity onPress={() => { setConfirmDelete(true); }} style={{marginTop: 20}}>
-                        <Text style={[styles.deleteButton]}>
+                    <TouchableOpacity onPress={() => { setConfirmDelete(true); }} style={[styles.deleteButton, {marginTop: 20}]}>
+                        <Text style={[styles.deleteButtonText]}>
                             Delete
                         </Text>
                     </TouchableOpacity>
@@ -100,13 +100,13 @@ export default function AddPage({navigation, route}) {
                 editExistingTracker && confirmDelete &&
                     <View style={styles.confirmDeleteContainer}>
                         <Text>Are you sure?</Text>
-                        <TouchableOpacity onPress={() => { setConfirmDelete(false); }}>
-                            <Text style={[styles.confirmDeleteButton]}>
+                        <TouchableOpacity onPress={() => { setConfirmDelete(false); }} style={[styles.confirmDeleteButton]}>
+                            <Text style={[styles.confirmDeleteButtonText]}>
                                 Cancel
                             </Text>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={() => { onDelete(); }}>
-                            <Text style={[styles.deleteButton]}>
+                        <TouchableOpacity onPress={() => { onDelete(); }} style={[styles.deleteButton]}>
+                            <Text style={[styles.deleteButtonText]}>
                                 Delete
                             </Text>
                         </TouchableOpacity>
@@ -190,9 +190,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#eee",
         padding: 10,
         borderRadius: 10,
-        width: 50,
-        textAlign: "center",
-        // marginLeft: 20
+        width: 50
     },
     invertButtonSelected: {
         backgroundColor: "#edc82f"
@@ -201,7 +199,9 @@ const styles = StyleSheet.create({
         width: 70,
         padding: 10,
         borderRadius: 10,
-        backgroundColor: "#c96d5d",
+        backgroundColor: "#c96d5d"
+    },
+    deleteButtonText: {
         color: "white",
         textAlign: "center"
     },
@@ -215,7 +215,9 @@ const styles = StyleSheet.create({
         padding: 10,
         borderRadius: 10,
         marginHorizontal: 20,
-        backgroundColor: "#eee",
+        backgroundColor: "#eee"
+    },
+    confirmDeleteButtonText: {
         textAlign: "center"
     }
 });
