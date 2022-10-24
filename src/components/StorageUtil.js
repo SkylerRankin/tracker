@@ -88,9 +88,13 @@ const writeAppData = async (context) => {
 }
 
 const deleteLocalStorage = async () => {
-    FileSystem.deleteAsync(storageDirectory);
-    const response = await FileSystem.getInfoAsync(storageDirectory);
-    console.log(`Local storage directory exists after deletion: ${response.exists}.`);
+    const storageResponse = await FileSystem.getInfoAsync(storageDirectory);
+    console.log(storageResponse)
+    if (storageResponse.exists) {
+        FileSystem.deleteAsync(storageDirectory);
+        const response = await FileSystem.getInfoAsync(storageDirectory);
+        console.log(`Local storage directory exists after deletion: ${response.exists}.`);
+    }
 }
 
 export { runStorageInitialization, writeAppData, deleteLocalStorage }
