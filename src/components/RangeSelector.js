@@ -2,7 +2,8 @@ import { useContext, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Image } from "react-native";
 import AppContext from "./AppContext";
 import { graphTimeRanges } from "./Constants";
-import leftArrow from '../../assets/images/leftArrow.png';
+import leftArrow from '../assets/images/leftArrow.png';
+import AppText from "./AppText";
 
 export default function RangeSelector() {
 
@@ -27,7 +28,7 @@ export default function RangeSelector() {
             key={r}
             style={{margin: 3}}>
             <View style={[styles.rangeSelector, i === context.chartTimeScale && styles.rangeSelectorSelected]}>
-                <Text style={{color: "#777"}}>{r}</Text>
+                <AppText style={{color: "#777"}}>{r}</AppText>
             </View>
         </TouchableOpacity>
     ));

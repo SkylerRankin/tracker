@@ -11,6 +11,10 @@ export const graphColors = [
     "#3b533f",
 ];
 
+export const customFonts = {
+    "SourceSansPro": require("../assets/fonts/source-sans-pro/SourceSansPro-Regular.ttf")
+};
+
 export const graphTimeRanges = {
     labels: [ "W", "M", "Y" ],
     days: [ 7, 30, 365 ]

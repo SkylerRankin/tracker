@@ -1,6 +1,7 @@
 import { useContext, useState } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import AppContext from '../components/AppContext';
+import AppText from '../components/AppText';
 import { graphColors } from '../components/Constants';
 
 export default function AddPage({navigation, route}) {
@@ -51,18 +52,18 @@ export default function AddPage({navigation, route}) {
     return (
         <View style={styles.container}>
             <View style={styles.headerContainer}>
-                <Text style={{fontSize: 20}}>{ editExistingTracker ? "Edit tracker" : "Add a tracker" }</Text>
+                <AppText style={{fontSize: 20}}>{ editExistingTracker ? "Edit tracker" : "Add a tracker" }</AppText>
                 <TouchableOpacity
                     onPress={() => navigation.navigate('Home')}
-                    style={{marginLeft: "auto"}}>
-                    <Text style={styles.buttonText}>back</Text>
+                    style={styles.backButton}>
+                    <AppText style={styles.backButtonText}>Back</AppText>
                 </TouchableOpacity>
             </View>
-            <Text style={{marginBottom: 10, marginTop: 30}}>Name...</Text>
+            <AppText style={{marginBottom: 10, marginTop: 30}}>Name...</AppText>
             <TextInput style={styles.nameInput} onChangeText={setTrackerName} value={trackerName}/>
             
-            <Text style={styles.messageText}>{ !nameIsNew && "~ this name has already been used" }</Text>
-            <Text style={{marginTop: 30, marginBottom: 20}}>Color...</Text>
+            <AppText style={styles.messageText}>{ !nameIsNew && "~ this name has already been used" }</AppText>
+            <AppText style={{marginTop: 30, marginBottom: 20}}>Color...</AppText>
             <View style={styles.colorSelectorContainer}>
             { graphColors.map(graphColor => (
                 <TouchableOpacity
@@ -79,36 +80,36 @@ export default function AddPage({navigation, route}) {
                     onChangeText={onCustomColorChange}
                     value={customColor}
                     style={[styles.customColorInput, customColor && styles.customColorInputActive]}/>
-                <Text style={[styles.messageText, { height: 50 }]}>{ !customColorIsValid && "~ must be a hex value" }</Text>
+                <AppText style={[styles.messageText, { height: 50 }]}>{ !customColorIsValid && "~ must be a hex value" }</AppText>
             </View>
 
-            <Text style={{marginTop: 30, marginBottom: 20}}>Invert y-axis in chart...</Text>
+            <AppText style={{marginTop: 30, marginBottom: 20}}>Invert y-axis in chart...</AppText>
             <TouchableOpacity onPress={() => { setInvertAxis(!invertAxis); }} style={[styles.invertButton, invertAxis && styles.invertButtonSelected]}>
-                <Text style={{textAlign: "center"}}>
+                <AppText style={{textAlign: "center"}}>
                     {invertAxis ? "Yes" : "No"}
-                </Text>
+                </AppText>
             </TouchableOpacity>
             {
                 editExistingTracker && !confirmDelete &&
                     <TouchableOpacity onPress={() => { setConfirmDelete(true); }} style={[styles.deleteButton, {marginTop: 20}]}>
-                        <Text style={[styles.deleteButtonText]}>
+                        <AppText style={[styles.deleteButtonText]}>
                             Delete
-                        </Text>
+                        </AppText>
                     </TouchableOpacity>
             }
             {
                 editExistingTracker && confirmDelete &&
                     <View style={styles.confirmDeleteContainer}>
-                        <Text>Are you sure?</Text>
+                        <AppText>Are you sure?</AppText>
                         <TouchableOpacity onPress={() => { setConfirmDelete(false); }} style={[styles.confirmDeleteButton]}>
-                            <Text style={[styles.confirmDeleteButtonText]}>
+                            <AppText style={[styles.confirmDeleteButtonText]}>
                                 Cancel
-                            </Text>
+                            </AppText>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={() => { onDelete(); }} style={[styles.deleteButton]}>
-                            <Text style={[styles.deleteButtonText]}>
+                            <AppText style={[styles.deleteButtonText]}>
                                 Delete
-                            </Text>
+                            </AppText>
                         </TouchableOpacity>
                     </View>
             }
@@ -117,7 +118,7 @@ export default function AddPage({navigation, route}) {
                 <TouchableOpacity
                     style={styles.saveButtonContainer}
                     onPress={onSave}>
-                    <Text style={{textAlign: "center"}}>Save</Text>
+                    <AppText style={{textAlign: "center"}}>Save</AppText>
                 </TouchableOpacity>)
             }
         </View>
@@ -219,5 +220,18 @@ const styles = StyleSheet.create({
     },
     confirmDeleteButtonText: {
         textAlign: "center"
+    },
+    backButton: {
+        width: 70,
+        height: 29,
+        alignItems: "center",
+        justifyContent: "center",
+        borderRadius: 8,
+        backgroundColor: "#eee",
+        padding: 2,
+        marginLeft: "auto"
+    },
+    backButtonText: {
+        color: "black"
     }
 });

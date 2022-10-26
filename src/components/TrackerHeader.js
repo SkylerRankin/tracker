@@ -1,6 +1,7 @@
 import { useContext } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import AppContext from "./AppContext";
+import AppText from "./AppText";
 import { aggregationModes } from "./Constants";
 
 const capitalizeWord = s => {
@@ -19,16 +20,16 @@ export default function TrackerHeader({ onEdit, onAdd }) {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.text}>Your trackers</Text>
+            <AppText style={styles.text}>Your trackers</AppText>
             <View style={styles.buttonsContainer}>
                 <TouchableOpacity onPress={onAggregationToggle} style={[styles.button, { marginRight: 0 }]}>
-                    <Text style={styles.buttonText}>{aggregationMode}</Text>
+                    <AppText style={styles.buttonText}>{aggregationMode}</AppText>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={onEdit} style={[styles.button]}>
-                    <Text style={styles.buttonText}>Edit</Text>
+                    <AppText style={styles.buttonText}>Edit</AppText>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={onAdd} style={[styles.button, { marginLeft: 0 }]}>
-                    <Text style={styles.buttonText}>New</Text>
+                    <AppText style={styles.buttonText}>New</AppText>
                 </TouchableOpacity>
             </View>
         </View>

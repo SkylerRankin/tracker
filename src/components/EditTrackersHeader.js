@@ -1,14 +1,15 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import AppText from "./AppText";
 
 
 export default function EditTrackersHeader({ onBack }) {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.text}>Edit trackers</Text>
+            <AppText style={styles.text}>Edit trackers</AppText>
             <View style={styles.buttonsContainer}>
                 <TouchableOpacity onPress={onBack} style={[styles.button, { marginLeft: 0 }]}>
-                    <Text style={styles.buttonText}>Back</Text>
+                    <AppText style={styles.buttonText}>Back</AppText>
                 </TouchableOpacity>
             </View>
         </View>

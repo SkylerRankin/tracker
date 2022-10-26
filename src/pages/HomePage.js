@@ -11,6 +11,9 @@ import { deleteLocalStorage } from '../components/StorageUtil';
 import TrackerHeader from '../components/TrackerHeader';
 import EditTrackersHeader from '../components/EditTrackersHeader';
 import { isSameDay, subYears } from 'date-fns';
+import AppText from '../components/AppText';
+
+const showDebugDeleteButton = false;
 
 export default function HomePage({navigation}) {
     
@@ -30,7 +33,7 @@ export default function HomePage({navigation}) {
         <EditableTracker key={i} tracker={tracker} index={i} onEditTracker={onEditTracker}/>
     ));
 
-    let trackersList = <Text style={styles.noTrackersText}>Press New to add a tracker.</Text>;
+    let trackersList = <AppText style={styles.noTrackersText}>Press New to add a tracker.</AppText>;
     if (context.trackers.length > 0) {
         trackersList = context.trackers.map((tracker, i) => {
             const lastTimestamp = context.pastResponses[i].length === 0 ?
@@ -48,13 +51,17 @@ export default function HomePage({navigation}) {
         }
     )}
 
+    const debugDeleteButton = (
+        <TouchableOpacity onPress={async () => await deleteLocalStorage()}>
+            <AppText>Delete local data</AppText>
+        </TouchableOpacity>
+    );
+
     return (
         <View style={styles.container}>
             <View style={styles.header}>
-                <Text style={styles.title}>daily tracker</Text>
-                <TouchableOpacity onPress={async () => await deleteLocalStorage()}>
-                    <Text>Delete local data</Text>
-                </TouchableOpacity>
+                <AppText style={styles.title}>mind tracker</AppText>
+                { showDebugDeleteButton && debugDeleteButton }
             </View>
             <View style={{marginBottom: 20}}><RangeSelector/></View>
             <View style={{ paddingHorizontal: 20 }}>
@@ -87,8 +94,10 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: 30,
-        marginLeft: 20,
-        marginBottom: 40
+        marginLeft: 10,
+        marginBottom: 30,
+        fontFamily: "SourceSansPro"
+        // fontFamily: "monospace"
     },
     addButton: {
         width: 40,

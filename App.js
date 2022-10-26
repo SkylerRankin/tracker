@@ -1,5 +1,6 @@
 import { SafeAreaView, StyleSheet, AppState } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
+import * as Font from 'expo-font';
 import HomePage from './src/pages/HomePage';
 import AddPage from './src/pages/AddPage';
 import TrackerPage from './src/pages/TrackerPage';
@@ -8,9 +9,9 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import SafeViewAndroid from './src/styles/SafeViewAndroid';
 import { Component } from 'react';
 import AppContext from './src/components/AppContext';
-import { getLargeTestData, getPastThreeWeekGappedTestData, getPastThreeWeekTestData, getTestData } from './src/components/TestData';
 import { runStorageInitialization, writeAppData } from './src/components/StorageUtil';
-import { addConfigToChartDatasetCache, buildFullDatasetCache } from './src/components/DataUtil';
+import { addConfigToChartDatasetCache, buildFullDatasetCache, getSampleData } from './src/components/DataUtil';
+import { customFonts } from './src/components/Constants';
 
 /**
 
@@ -62,24 +63,14 @@ export default class App extends Component {
     }
 
     async componentDidMount(_, prevState) {
-        console.log("Initializing app");
         // Use an arrow function for listener to ensure onAppStateChange has the scope access to this.state.
         this.appStateSubscription = AppState.addEventListener("change", (nextAppState) => this.onAppStateChange(nextAppState));
-        // await deleteLocalStorage();
         const loadedData = await runStorageInitialization();
-
-        // FOR DEBUGGING!!!!!!!!!!!
-        if (loadedData.trackers.length === 0) {
-            console.log("!!!!!!!!!!!! Loading test data");
-            loadedData.pastResponses = [
-                getPastThreeWeekTestData(),
-                getLargeTestData()
-            ];
-            loadedData.trackers = [
-                { name: "three weeks", segments: 10, color: "#99a98d", invertAxis: true },
-                { name: "500 days", segments: 10, color: "#b1a59a", invertAxis: false }
-            ];
-            loadedData.selectedTrackers = [0, 1];
+        if (loadedData.noSaveData) {
+            const sampleData = getSampleData();
+            loadedData.pastResponses = sampleData.pastResponses;
+            loadedData.trackers = sampleData.trackers;
+            loadedData.selectedTrackers = sampleData.selectedTrackers;
         }
 
         // Initialize the dataset cache for each time scale - aggregation - tracker configuration.
@@ -89,6 +80,8 @@ export default class App extends Component {
         // Initialize the chart dataset cache for each loaded tracker.
         const chartDatasetCache = addConfigToChartDatasetCache({}, fullDatasetCache, loadedData.trackers,
             this.state.chartTimeOffset, this.state.chartTimeScale, this.state.aggregationMode);
+
+        await Font.loadAsync(customFonts);
 
         this.setState({
             ...prevState,

@@ -1,7 +1,8 @@
 import { Text } from "react-native";
+import AppText from "./AppText";
 
 export default function ChartLineDate() {
     return (
-        <Text>The date</Text>
+        <AppText>The date</AppText>
     );
 }

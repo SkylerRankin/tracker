@@ -1,11 +1,13 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Dimensions, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import AppContext from '../components/AppContext';
+import AppText from '../components/AppText';
 import { invertValue } from '../components/DataUtil';
 import PastResponse from '../components/PastResponse';
 import ScrollableSelector from '../components/ScrollableSelector';
 
 const maxResponsesInList = 50;
+const pageWidth = Dimensions.get("window").width;
 
 export default function TrackerPage({ navigation, route }) {
     const trackerIndex = route.params.trackerIndex;
@@ -36,24 +38,24 @@ export default function TrackerPage({ navigation, route }) {
     return (
         <View style={styles.container}>
             <View style={{flexDirection: "row"}}>
-                <Text style={styles.trackerName}>{tracker.name}</Text>
+                <AppText style={styles.trackerName}>{tracker.name}</AppText>
                 <TouchableOpacity
                     onPress={() => navigation.pop()}
-                    style={{marginLeft: "auto"}}>
-                    <Text style={styles.buttonText}>back</Text>
+                    style={styles.backButton}>
+                    <AppText style={styles.backButtonText}>Back</AppText>
                 </TouchableOpacity>
             </View>
-            <Text style={styles.responseText}>Today's response...</Text>
+            <AppText style={styles.responseText}>Today's response...</AppText>
             <ScrollableSelector
                 responseValue={responseValue}
                 setResponseValue={setResponseValue}
                 segments={tracker.segments}/>
-            <Text style={styles.responseText}>Notes...</Text>
+            <AppText style={styles.responseText}>Notes...</AppText>
             <TextInput onChangeText={setResponseNotes} value={responseNotes} style={styles.notesInput} multiline={true}/>
             <TouchableOpacity style={styles.saveButtonContainer} onPress={onSave}>
-                <Text style={{textAlign: "center"}}>Save</Text>
+                <AppText style={{textAlign: "center"}}>Save</AppText>
             </TouchableOpacity>
-            <Text style={[styles.responseText, {marginTop: 60}]}>Past responses...</Text>
+            <AppText style={[styles.responseText, {marginTop: 60}]}>Past responses...</AppText>
             <ScrollView style={styles.pastResponseContainer}>
                 { pastResponses.map((response, i) => <PastResponse key={i} response={response}/>) }
             </ScrollView>
@@ -68,9 +70,11 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
     },
     trackerName: {
-        fontSize: 30,
+        fontSize: 20,
         fontWeight: "bold",
-        marginBottom: 40
+        marginBottom: 40,
+        marginRight: 20,
+        width: pageWidth - 40 - 70 - 20
     },
     responseText: {
         marginBottom: 20
@@ -96,5 +100,18 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingLeft: 30,
         paddingRight: 10
+    },
+    backButton: {
+        width: 70,
+        height: 29,
+        alignItems: "center",
+        justifyContent: "center",
+        borderRadius: 8,
+        backgroundColor: "#eee",
+        padding: 2,
+        marginLeft: "auto"
+    },
+    backButtonText: {
+        color: "black"
     }
 });

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import AppText from "./AppText";
 
 const makeDateString = timestamp => {
     const months = ["Jan", "Fed", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -24,13 +25,13 @@ export default function PastResponse({response}) {
             onPress={() => {setExpanded(!expanded)}}>
             <View style={[styles.container, expanded && hasNote && styles.expandedContainer]}>
                 <View style={styles.rowContainer}>
-                    <Text style={{fontWeight: "bold"}}>{response.value}</Text>
-                    <Text style={{color: "#ccc"}}>  •  </Text>
-                    <Text style={{color: "#444"}}>{makeDateString(response.timestamp)}</Text>
-                    { !expanded && <Text style={{marginLeft: "auto"}}>{notesText}</Text> }
+                    <AppText style={{fontWeight: "bold", width: 20}}>{response.value}</AppText>
+                    <AppText style={styles.dot}>•</AppText>
+                    <AppText style={{color: "#444"}}>{makeDateString(response.timestamp)}</AppText>
+                    { !expanded && <AppText style={{marginLeft: "auto"}}>{notesText}</AppText> }
                 </View>
                 {
-                    expanded && hasNote && <Text style={{marginTop: 10}}>{response.notes}</Text>
+                    expanded && hasNote && <AppText style={{marginTop: 10}}>{response.notes}</AppText>
                 }
             </View>
         </TouchableOpacity>
@@ -51,5 +52,11 @@ const styles = StyleSheet.create({
     rowContainer: {
         flexDirection: "row",
         borderRadius: 10
-    }
+    },
+    dot: {
+        color: "#ccc",
+        width: 20,
+        textAlign: "center",
+        marginHorizontal: 4
+    },
 });

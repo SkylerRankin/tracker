@@ -1,9 +1,10 @@
 import { useContext } from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
-import infoIcon from '../../assets/images/info.png';
-import upIcon from '../../assets/images/upArrow.png';
-import downIcon from '../../assets/images/downArrow.png';
+import infoIcon from '../assets/images/info.png';
+import upIcon from '../assets/images/upArrow.png';
+import downIcon from '../assets/images/downArrow.png';
 import AppContext from "./AppContext";
+import AppText from "./AppText";
 
 export default function EditableTracker({tracker, index, onEditTracker}) {
 
@@ -25,7 +26,7 @@ export default function EditableTracker({tracker, index, onEditTracker}) {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.nameText}>{tracker.name}</Text>
+            <AppText style={styles.nameText}>{tracker.name}</AppText>
             <TouchableOpacity onPress={onOrderDown} style={{marginLeft: "auto"}}>
                 <Image style={[styles.orderImage]} source={downIcon}/>
             </TouchableOpacity>

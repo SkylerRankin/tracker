@@ -3,6 +3,7 @@ import { Dimensions, StyleSheet, Text, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { LineChart } from 'react-native-wagmi-charts';
 import AppContext from './AppContext';
+import AppText from './AppText';
 import { graphColors } from './Constants';
 import { getChartDatasetCacheKey, invertValue } from './DataUtil';
 
@@ -50,9 +51,9 @@ export default function TrackingChart() {
         if (invertAxis && currentValue > -1) currentValue = invertValue(currentValue);
         const toolTip = currentValue >= 0 ?
             <LineChart.Tooltip>
-                <Text style={[tooltipStyles.tooltip, { backgroundColor: data.color }]}>
+                <AppText style={[tooltipStyles.tooltip, { backgroundColor: data.color }]}>
                     { currentValue }
-                </Text>
+                </AppText>
             </LineChart.Tooltip> : null;
 
         charts.push(

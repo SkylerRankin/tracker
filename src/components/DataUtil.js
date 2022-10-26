@@ -57,7 +57,7 @@ const aggregateSegmentOfResponses = (dataset, options) => {
     let valuesInSegment = [];
 
     const addSegment = () => {
-        const value = valuesInSegment.length === 0 ? 0 :
+        const value = valuesInSegment.length === 0 ? -1 :
             aggregationModeIndex === aggregationModeIndices.avg ? arrayAvg(valuesInSegment) :
             aggregationModeIndex === aggregationModeIndices.min ? arrayMin(valuesInSegment) :
             arrayMax(valuesInSegment);
@@ -360,6 +360,45 @@ const addConfigToChartDatasetCache = (previousCache, fullDatasetCache, trackers,
 
 const invertValue = v => v === -1 ? v : 10 - v + 1;
 
+const getSampleData = () => {
+    const values = [3, 2, 4, [1, 3], 4, [6, 3], 5, 7, [6, 5, 4], [5, 4], 5, 4, [6, 7], [3, 2, 5], [7, 6], 8];
+    const today = new Date();
+    const sampleResponses = [];
+    values.forEach((value, i) => {
+        if (typeof(value) === "number") {
+            sampleResponses.push({
+                timestamp: subDays(today, values.length - 1 - i).getTime(),
+                value: value,
+                notes: ""
+            });
+        } else {
+            value.forEach(v => {
+                sampleResponses.push({
+                    timestamp: subDays(today, values.length - 1 - i).getTime(),
+                    value: v,
+                    notes: ""
+                });
+            });
+        }
+    });
+    sampleResponses[sampleResponses.length - 1].notes = "Tap here! Notes can be useful to store more context.";
+    const data = {
+        pastResponses: [
+            sampleResponses
+        ],
+        trackers: [
+            {
+                name: "Sample tracker ~ Long press to add data",
+                segments: 10,
+                color: "#99a98d",
+                invertAxis: false
+            }
+        ],
+        selectedTrackers: [0]
+    };
+    return data;
+}
+
 export { getDateRange, fillMissingDays, aggregateSegmentOfResponses, addStartBufferDays, addEndBufferDays,
     getProcessedSequence, getFullDatasetCacheKey, buildFullDatasetCache, getChartDatasetCacheKey,
-    addConfigToChartDatasetCache, addStartBufferMonths, invertValue }
+    addConfigToChartDatasetCache, addStartBufferMonths, invertValue, getSampleData }

@@ -2,6 +2,7 @@ import { addDays, differenceInDays, getDate, getMonth } from "date-fns";
 import { useContext } from "react";
 import { View, Text, StyleSheet, Dimensions } from "react-native";
 import AppContext from "./AppContext";
+import AppText from "./AppText";
 import { getDateRange } from "./DataUtil";
 
 const pageWidth = Dimensions.get("window").width;
@@ -26,7 +27,7 @@ export default function DateAxis() {
         // Months are 0-indexed in date-fns, but days are not!
         const dateText = `${getMonth(date) + 1}/${getDate(date)}`;
         labels.push(
-            <Text key={i} style={ style }>{dateText}</Text>
+            <AppText key={i} style={ style }>{dateText}</AppText>
         );
     }
 

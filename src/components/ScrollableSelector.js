@@ -1,5 +1,6 @@
 import React from 'react';
 import { Dimensions, ScrollView, StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native';
+import AppText from './AppText';
 
 const totalWidth = Dimensions.get("window").width - 40;
 const halfTotalWidth = totalWidth / 2;
@@ -32,7 +33,7 @@ const createScrollSegments = (selectedIndex, segments) => {
             <TouchableWithoutFeedback key={i}>
                 <View style={containerStylesList}>
                     <View style={segmentStylesList}>
-                        <Text style={{textAlign: "center", fontSize: 20}}>{text}</Text>
+                        <AppText style={{textAlign: "center", fontSize: 20}}>{text}</AppText>
                     </View>
                 </View>
             </TouchableWithoutFeedback>

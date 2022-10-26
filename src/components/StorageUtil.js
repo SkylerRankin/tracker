@@ -19,7 +19,8 @@ const runStorageInitialization = async () => {
     let data = {
         pastResponses: [],
         trackers: [],
-        selectedTrackers: []
+        selectedTrackers: [],
+        noSaveData: !directoryResponse.exists
     };
 
     const saveFiles = await FileSystem.readDirectoryAsync(storageDirectory);

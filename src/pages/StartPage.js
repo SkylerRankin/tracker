@@ -1,7 +1,9 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { Image, StyleSheet, View } from 'react-native';
 import { useContext } from 'react';
 import AppContext from '../components/AppContext';
 import { StackActions } from '@react-navigation/native';
+import logoImage from '../assets/images/icon.png';
+import { deleteLocalStorage } from '../components/StorageUtil';
 
 export default function StartPage({navigation}) {
     const context = useContext(AppContext);
@@ -14,7 +16,7 @@ export default function StartPage({navigation}) {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.titleText}>~ daily tracker</Text>
+            <Image style={styles.image} source={logoImage}/>
         </View>
     );
 
@@ -27,13 +29,8 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center"
     },
-    titleText: {
-        backgroundColor: "#eee",
-        textAlign: "center",
-        fontSize: 18,
-        fontStyle: "italic",
-        width: 200,
-        padding: 10,
-        borderRadius: 10
+    image: {
+        width: 100,
+        height: 100
     }
 });

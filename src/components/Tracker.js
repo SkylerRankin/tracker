@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
-import dotIcon from '../../assets/images/dot.png';
-import checkIcon from '../../assets/images/check.png';
+import dotIcon from '../assets/images/dot.png';
+import checkIcon from '../assets/images/check.png';
+import AppText from "./AppText";
 
 export default function Tracker({navigation, tracker, completed, selected, onPress, index}) {
     return (
@@ -10,7 +11,7 @@ export default function Tracker({navigation, tracker, completed, selected, onPre
                 navigation.push("Trackers", { trackerIndex: index })
             }}>
             <View style={styles.container}>
-                <Text style={styles.nameText}>{tracker.name}</Text>
+                <AppText style={styles.nameText}>{tracker.name}</AppText>
                 <Image style={[styles.reminderImage, styles.firstImageInRow, completed && styles.reminderImageInactive]} source={dotIcon}/>
                 <Image style={[styles.isSelectedImage, selected && { tintColor: tracker.color }]} source={checkIcon}/>
             </View>
