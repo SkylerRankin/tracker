@@ -7,11 +7,10 @@ The app shows data in week, month, or year-long chunks. Days with multiple respo
 
 Screenshots:
 
-<img src="./readme-assets/screenshot1.png" width="200">
-<img src="./readme-assets/screenshot2.png" width="200">
-<img src="./readme-assets/screenshot4.png" width="200">
-<img src="./readme-assets/screenshot3.png" width="200">
-
+<img src="./readme-assets/screenshot1.png" width="200" style="display: inline-block">
+<img src="./readme-assets/screenshot2.png" width="200" style="display: inline-block">
+<img src="./readme-assets/screenshot4.png" width="200" style="display: inline-block">
+<img src="./readme-assets/screenshot3.png" width="200" style="display: inline-block">
 
 ---
 
