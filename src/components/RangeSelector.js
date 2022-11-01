@@ -1,8 +1,9 @@
-import { useContext } from "react";
-import { View, StyleSheet, TouchableOpacity, Image } from "react-native";
-import AppContext from "../util/AppContext";
-import { graphTimeRanges } from "../pages/Constants";
+import React, { useContext } from "react";
+import { Image,StyleSheet, TouchableOpacity, View } from "react-native";
+
 import leftArrow from '../assets/images/leftArrow.png';
+import AppContext from "../util/AppContext";
+import { graphTimeRanges } from "../util/Constants";
 import AppText from "./AppText";
 
 export default function RangeSelector() {

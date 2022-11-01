@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "tracker",
-    "slug": "tracker",
+    "name": "minatrack",
+    "slug": "minatrack",
     "version": "1.0.0",
     "orientation": "portrait",
+    "icon": "./assets/icon-ios.png",
     "owner": "isqaa",
-    "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
@@ -23,12 +23,9 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/icon-android.png",
         "backgroundColor": "#FFFFFF"
       }
-    },
-    "web": {
-      "favicon": "./assets/favicon.png"
     }
   }
 }

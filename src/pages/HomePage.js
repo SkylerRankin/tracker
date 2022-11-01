@@ -1,18 +1,18 @@
+import { isSameDay, subYears } from 'date-fns';
+import React, { useContext, useState } from 'react';
 import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
-import TrackingChart from '../components/TrackingChart';
-import Tracker from '../components/Tracker';
-import { useContext, useState } from 'react';
-import AppContext from '../util/AppContext';
-import RangeSelector from '../components/RangeSelector';
+
+import AppText from '../components/AppText';
 import DateAxis from '../components/DateAxis';
 import EditableTracker from '../components/EditableTracker';
-import { deleteLocalStorage } from '../util/StorageUtil';
-import TrackerHeader from '../components/TrackerHeader';
 import EditTrackersHeader from '../components/EditTrackersHeader';
-import { isSameDay, subYears } from 'date-fns';
-import AppText from '../components/AppText';
-
-const showDebugDeleteButton = true;
+import RangeSelector from '../components/RangeSelector';
+import Tracker from '../components/Tracker';
+import TrackerHeader from '../components/TrackerHeader';
+import TrackingChart from '../components/TrackingChart';
+import AppContext from '../util/AppContext';
+import { showDebugDeleteButton } from '../util/Constants';
+import { deleteLocalStorage } from '../util/StorageUtil';
 
 export default function HomePage({navigation}) {
     

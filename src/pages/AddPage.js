@@ -1,8 +1,9 @@
-import { useContext, useState } from 'react';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import AppContext from '../components/AppContext';
+import React, { useContext, useState } from 'react';
+import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
+
 import AppText from '../components/AppText';
-import { graphColors } from '../components/Constants';
+import AppContext from '../util/AppContext';
+import { graphColors } from '../util/Constants';
 
 export default function AddPage({navigation, route}) {
     const context = useContext(AppContext);

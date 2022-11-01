@@ -1,5 +1,8 @@
-import { subWeeks, subMonths, subYears, isBefore, isAfter, maxTime, minTime, addDays, startOfDay, endOfDay, differenceInDays, subDays, startOfWeek, startOfMonth, startOfYear, isSameMonth, addMonths, getMonth } from "date-fns";
-import { aggregationModeIndices, aggregationModes, chartTimeScales, graphTimeRanges, maxChartDatasetCacheSizePerTracker } from "../pages/Constants";
+import { addDays, addMonths, differenceInDays, endOfDay, getMonth,isAfter, isBefore, isSameMonth, maxTime, minTime, startOfDay, startOfMonth, startOfWeek, startOfYear, subDays, subMonths, subWeeks, subYears } from "date-fns";
+
+import { aggregationModeIndices, aggregationModes, chartTimeScales, graphTimeRanges, maxChartDatasetCacheSizePerTracker } from "./Constants";
+import { log } from "./Logger";
+import { getLargeTestData, getPastThreeWeekTestData } from "./TestData";
 
 const arrayAvg = a => a.reduce((prev, curr) => prev + curr, 0) / a.length;
 const arrayMax = a => a.reduce((prev, curr) => Math.max(prev, curr), a[0]);
@@ -102,7 +105,7 @@ const fillMissingDays = (dataset) => {
     const results = [];
     let previousValue = dataset[0].value;
     let previousTimestamp = subDays(dataset[0].timestamp, 1).getTime();
-    dataset.forEach((response, i) => {
+    dataset.forEach((response) => {
         const distance = differenceInDays(response.timestamp, previousTimestamp);
 
         if (distance < 0) {
@@ -295,8 +298,6 @@ const buildFullDatasetCache = (pastResponsesPerIndex, trackerCount) => {
                 const key = getFullDatasetCacheKey(chartTimeScaleIndex, aggregationModeIndex, trackerIndex);
                 if (!Object.keys(fullDatasetCache).includes(key)) {
                     fullDatasetCache[key] = getProcessedSequence(pastResponsesPerIndex[trackerIndex], aggregationModeIndex, chartTimeScaleIndex);
-                    console.log(`key: ${key} last date = ${fullDatasetCache[key][fullDatasetCache[key].length - 1].timestamp}, last value = ${fullDatasetCache[key][fullDatasetCache[key].length - 1].value}`);
-                    console.log(differenceInDays(fullDatasetCache[key][fullDatasetCache[key].length - 1].timestamp, new Date().getTime()));
                 }
             }
         }
@@ -323,7 +324,7 @@ const addConfigToChartDatasetCache = (previousCache, fullDatasetCache, trackers,
         if (currentCacheSizeForTracker >= maxChartDatasetCacheSizePerTracker) {
             // Find the oldest key.
             const oldestKey = Object.keys(previousCache).reduce((prev, curr) => previousCache[prev].timestamp < previousCache[curr].timestamp ? prev : curr, Object.keys(previousCache)[0]);
-            console.log(`Removed old key ${oldestKey} from chart cache.`);
+            log(`Removed old key ${oldestKey} from chart cache.`);
 
             // Add all but the oldest key to the new cache.
             Object.keys(previousCache).forEach(key => {
@@ -356,10 +357,10 @@ const addConfigToChartDatasetCache = (previousCache, fullDatasetCache, trackers,
             timestamp: new Date().getTime(),
             data
         };
-        console.log(`Added key ${newChartKey} to chart cache. data length = ${data.length}.`);
+        log(`Added key ${newChartKey} to chart cache. data length = ${data.length}.`);
     }
 
-    console.log(`Finished cache update. New size = ${Object.keys(newCache).length} for ${trackers.length} trackers.`);
+    log(`Finished cache update. New size = ${Object.keys(newCache).length} for ${trackers.length} trackers.`);
     return newCache;
 }
 
@@ -404,6 +405,38 @@ const getSampleData = () => {
     return data;
 }
 
+const getScreenShotData = () => {
+    const data = {
+        pastResponses: [
+            getLargeTestData(),
+            getPastThreeWeekTestData(),
+            getPastThreeWeekTestData()
+        ],
+        trackers: [
+            {
+                name: "C++ study",
+                segments: 10,
+                color: "#99a98d",
+                invertAxis: false
+            },
+            {
+                name: "Shoulder pain",
+                segments: 10,
+                color: "#b1a59a",
+                invertAxis: false
+            },
+            {
+                name: "Procrastination",
+                segments: 10,
+                color: "#c3b070",
+                invertAxis: false
+            }
+        ],
+        selectedTrackers: [0, 1, 2]
+    };
+    return data;
+}
+
 export { getDateRange, fillMissingDays, aggregateSegmentOfResponses, addStartBufferDays, addEndBufferDays,
     getProcessedSequence, getFullDatasetCacheKey, buildFullDatasetCache, getChartDatasetCacheKey,
-    addConfigToChartDatasetCache, addStartBufferMonths, invertValue, getSampleData }
+    addConfigToChartDatasetCache, addStartBufferMonths, invertValue, getSampleData, getScreenShotData }

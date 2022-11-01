@@ -1,11 +1,11 @@
 import React, { useContext, useState } from 'react';
-import { Dimensions, StyleSheet, Text, View } from 'react-native';
+import { Dimensions, StyleSheet, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { LineChart } from 'react-native-wagmi-charts';
-import AppContext from './AppContext';
+
+import AppContext from '../util/AppContext';
+import { getChartDatasetCacheKey, invertValue } from '../util/DataUtil';
 import AppText from './AppText';
-import { graphColors } from '../pages/Constants';
-import { getChartDatasetCacheKey, invertValue } from './DataUtil';
 
 const pageWidth = Dimensions.get("window").width;
 const chartWidth = pageWidth - 30 * 2;
@@ -13,7 +13,6 @@ const chartHeight = 250;
 const chartLineWidthByScale = [6, 6, 6];
 
 export default function TrackingChart() {
-    console.log("------------------ TrackingChart render() ---------------------------");
     const context = useContext(AppContext);
 
     const [currentIndex, setCurrentIndex] = useState(-1);
@@ -29,20 +28,15 @@ export default function TrackingChart() {
     sortedTrackedIndices.forEach(trackerIndex => {
         const cacheKey = getChartDatasetCacheKey(trackerIndex, context.chartTimeOffset, context.chartTimeScale, context.aggregationMode);
         if (!Object.keys(context.chartDatasetCache).includes(cacheKey)) {
-            console.log(`Skipping chart cache key ${cacheKey}: not present in dataset cache.`);
             return;
         }
         const data = context.chartDatasetCache[cacheKey].data;
-        console.log(`data for cache key ${cacheKey}`);
-        data.forEach(d => { console.log(`  ${new Date(d.timestamp).toDateString()}: ${d.value}`); });
         if (data.length > 0) {
             datasets.push({
                 dataset: data,
                 color: context.trackers[trackerIndex].color,
                 trackerIndex
             });
-        } else {
-            console.log(`Skipping chart cache key ${cacheKey}: zero length dataset.`);
         }
     });
 

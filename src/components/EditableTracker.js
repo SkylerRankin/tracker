@@ -1,8 +1,9 @@
-import { useContext } from "react";
-import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
+import React, { useContext } from "react";
+import { Image, StyleSheet, TouchableOpacity,View } from "react-native";
+
+import downIcon from '../assets/images/downArrow.png';
 import infoIcon from '../assets/images/info.png';
 import upIcon from '../assets/images/upArrow.png';
-import downIcon from '../assets/images/downArrow.png';
 import AppContext from "../util/AppContext";
 import AppText from "./AppText";
 

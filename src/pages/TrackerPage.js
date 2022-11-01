@@ -1,10 +1,10 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { Dimensions, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import AppContext from '../util/AppContext';
+import React, { useContext, useState } from 'react';
+import { Dimensions, ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
+
 import AppText from '../components/AppText';
-import { invertValue } from '../components/DataUtil';
 import PastResponse from '../components/PastResponse';
 import ScrollableSelector from '../components/ScrollableSelector';
+import AppContext from '../util/AppContext';
 
 const maxResponsesInList = 50;
 const pageWidth = Dimensions.get("window").width;
@@ -45,7 +45,7 @@ export default function TrackerPage({ navigation, route }) {
                     <AppText style={styles.backButtonText}>Back</AppText>
                 </TouchableOpacity>
             </View>
-            <AppText style={styles.responseText}>Today's response...</AppText>
+            <AppText style={styles.responseText}>{"Today's response..."}</AppText>
             <ScrollableSelector
                 responseValue={responseValue}
                 setResponseValue={setResponseValue}

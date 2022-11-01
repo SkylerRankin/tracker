@@ -1,44 +1,23 @@
-import { SafeAreaView, StyleSheet, AppState } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import * as Font from 'expo-font';
-import HomePage from './src/pages/HomePage';
-import AddPage from './src/pages/AddPage';
-import TrackerPage from './src/pages/TrackerPage';
-import StartPage from './src/pages/StartPage';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import * as Font from 'expo-font';
+import * as SplashScreen from 'expo-splash-screen';
+import React, { Component } from 'react';
+import { AppState,SafeAreaView, StyleSheet } from 'react-native';
+
+import AddPage from './src/pages/AddPage';
+import HomePage from './src/pages/HomePage';
+import TrackerPage from './src/pages/TrackerPage';
 import SafeViewAndroid from './src/styles/SafeViewAndroid';
-import { Component } from 'react';
 import AppContext from './src/util/AppContext';
+import { customFonts, loadScreenshotData, saveChangesWaitMS } from './src/util/Constants';
+import { addConfigToChartDatasetCache, buildFullDatasetCache, getSampleData, getScreenShotData } from './src/util/DataUtil';
 import { runStorageInitialization, writeAppData } from './src/util/StorageUtil';
-import { addConfigToChartDatasetCache, buildFullDatasetCache, getSampleData } from './src/components/DataUtil';
-import { customFonts } from './src/components/Constants';
-
-/**
-
-Global store schema:
-
-- chart time scale: (0 = week, 1 = month, 2 = year)
-- chart time offset: integer number of `chart time scale`s from today into the past
-- trackers: array of tracker objects
-- selected trackers: array of indexes into `trackers`
-- past responses: array of past response objects
-- using chart line: boolean, true when the vertical line is in use on the chat
-
-Tracker object schema
-- name: string
-- segments: 10,
-- color: hex string
-- invertAxis: boolean
-
-Past response schema
-- timestamp: timestamp
-- value: integer [1, 10]
-- notes: string
-
-*/
 
 const stack = createNativeStackNavigator();
-const saveChangesWaitMS = 5 * 1000
+
+// Keep the splash screen visible until initialization finishes.
+SplashScreen.preventAutoHideAsync();
 
 export default class App extends Component {
 
@@ -68,6 +47,13 @@ export default class App extends Component {
         const loadedData = await runStorageInitialization();
         if (loadedData.noSaveData) {
             const sampleData = getSampleData();
+            loadedData.pastResponses = sampleData.pastResponses;
+            loadedData.trackers = sampleData.trackers;
+            loadedData.selectedTrackers = sampleData.selectedTrackers;
+        }
+
+        if (loadScreenshotData) {
+            const sampleData = getScreenShotData();
             loadedData.pastResponses = sampleData.pastResponses;
             loadedData.trackers = sampleData.trackers;
             loadedData.selectedTrackers = sampleData.selectedTrackers;
@@ -112,7 +98,6 @@ export default class App extends Component {
                 clearTimeout(this.saveChangesTimer);
                 this.saveChangesTimer = null;
             }
-            console.log(`Triggering writeAppData due to state change to ${nextAppState}.`);
             await writeAppData(this.state);
         }
         this.setState({ ...this.state, appState: nextAppState });
@@ -123,6 +108,12 @@ export default class App extends Component {
             clearTimeout(this.saveChangesTimer);
         }
         this.saveChangesTimer = setTimeout(async () => { await writeAppData(this.state) }, saveChangesWaitMS);
+    }
+
+    async onLayoutRootView() {
+        if (this.state.dataInitialized) {
+            await SplashScreen.hideAsync();
+        }
     }
 
     render() {
@@ -282,12 +273,15 @@ export default class App extends Component {
             chartDatasetCache: this.state.chartDatasetCache
         };
 
+        if (!this.state.dataInitialized) {
+            return null;
+        }
+
         return (
             <AppContext.Provider value={appContext}>
-                <SafeAreaView style={SafeViewAndroid.AndroidSafeArea}>
+                <SafeAreaView style={SafeViewAndroid.AndroidSafeArea} onLayout={this.onLayoutRootView.bind(this)}>
                     <NavigationContainer style={styles.root}>
                         <stack.Navigator>
-                            <stack.Screen name="Start" component={StartPage} options={{ headerShown: false }} />
                             <stack.Screen name="Home" component={HomePage} options={{ headerShown: false }} />
                             <stack.Screen name="Add" component={AddPage} options={{ headerShown: false }} />
                             <stack.Screen name="Trackers" component={TrackerPage} options={{ headerShown: false }} />

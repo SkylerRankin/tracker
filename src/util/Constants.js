@@ -30,3 +30,9 @@ export const approximateDaysPerYear = approximateDaysPerMonth * 12;
 export const chartTimeScales = { week: 0, month: 1, year: 2 };
 
 export const saveFileVersion = 1;
+
+export const saveChangesWaitMS = 5 * 1000;
+
+export const logsEnabled = false;
+export const showDebugDeleteButton = false;
+export const loadScreenshotData = false;

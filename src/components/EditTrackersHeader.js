@@ -1,6 +1,7 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import AppText from "./AppText";
+import React from 'react';
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 
+import AppText from "./AppText";
 
 export default function EditTrackersHeader({ onBack }) {
 

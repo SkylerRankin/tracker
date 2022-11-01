@@ -1,9 +1,10 @@
 import { addDays, differenceInDays, getDate, getMonth } from "date-fns";
-import { useContext } from "react";
-import { View, Text, StyleSheet, Dimensions } from "react-native";
+import React, { useContext } from "react";
+import { Dimensions, StyleSheet, View } from "react-native";
+
 import AppContext from "../util/AppContext";
+import { getDateRange } from "../util/DataUtil";
 import AppText from "./AppText";
-import { getDateRange } from "./DataUtil";
 
 const pageWidth = Dimensions.get("window").width;
 const axisWidth = pageWidth - 10 * 2;

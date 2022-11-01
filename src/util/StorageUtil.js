@@ -1,5 +1,7 @@
 import * as FileSystem from 'expo-file-system';
-import { saveFileVersion } from '../pages/Constants';
+
+import { saveFileVersion } from './Constants';
+import { log } from './Logger';
 
 const storageDirectory = `${FileSystem.documentDirectory}tracker_local_storage/`;
 const saveFileName = "save.json";
@@ -10,10 +12,10 @@ const trackersJSONKey = "t";
 const runStorageInitialization = async () => {
     const startTime = performance.now();
     const directoryResponse = await FileSystem.getInfoAsync(storageDirectory);
-    console.log(`Local storage directory exists: ${directoryResponse.exists}.`);
+    log(`Local storage directory exists: ${directoryResponse.exists}.`);
     if (!directoryResponse.exists) {
         await FileSystem.makeDirectoryAsync(storageDirectory);
-        console.log(`Creating local storage directory at ${storageDirectory}.`);
+        log(`Creating local storage directory at ${storageDirectory}.`);
     }
 
     let data = {
@@ -31,7 +33,7 @@ const runStorageInitialization = async () => {
         data.selectedTrackers = loadedData.trackerData.selectedTrackers;
     }
 
-    console.log(`runStorageInitialization latency: ${performance.now() - startTime}ms`);
+    log(`runStorageInitialization latency: ${performance.now() - startTime}ms`);
     return data;
 }
 
@@ -40,7 +42,7 @@ const loadData = async (files) => {
     files.reverse();
 
     const fileData = await FileSystem.readAsStringAsync(`${storageDirectory}${files[0]}`);
-    console.log(`Loaded ${fileData.length} characters from ${files[0]}.`);
+    log(`Loaded ${fileData.length} characters from ${files[0]}.`);
     if (fileData.length === 0) return null;
 
     try {
@@ -81,20 +83,20 @@ const writeAppData = async (context) => {
         saveFiles.reverse();
         for (let i = maxSavedFiles; i < saveFiles.length; i++) {
             await FileSystem.deleteAsync(`${storageDirectory}${saveFiles[i]}`);
-            console.log(`Deleted old save file ${storageDirectory}${saveFiles[i]}.`);
+            log(`Deleted old save file ${storageDirectory}${saveFiles[i]}.`);
         }
     }
 
-    console.log(`writeAppData latency: ${performance.now() - startTime}ms. ${(dataText.length / 1024).toFixed(3)} kb written to ${fileName}.`);
+    log(`writeAppData latency: ${performance.now() - startTime}ms. ${(dataText.length / 1024).toFixed(3)} kb written to ${fileName}.`);
 }
 
 const deleteLocalStorage = async () => {
     const storageResponse = await FileSystem.getInfoAsync(storageDirectory);
-    console.log(storageResponse)
+    log(storageResponse)
     if (storageResponse.exists) {
         FileSystem.deleteAsync(storageDirectory);
         const response = await FileSystem.getInfoAsync(storageDirectory);
-        console.log(`Local storage directory exists after deletion: ${response.exists}.`);
+        log(`Local storage directory exists after deletion: ${response.exists}.`);
     }
 }
 

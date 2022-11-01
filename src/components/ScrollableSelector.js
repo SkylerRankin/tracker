@@ -1,5 +1,6 @@
 import React from 'react';
-import { Dimensions, ScrollView, StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native';
+import { Dimensions, ScrollView, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
+
 import AppText from './AppText';
 
 const totalWidth = Dimensions.get("window").width - 40;

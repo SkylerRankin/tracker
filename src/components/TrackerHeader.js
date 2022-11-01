@@ -1,8 +1,9 @@
-import { useContext } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import AppContext from "./AppContext";
+import React, { useContext } from "react";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
+
+import AppContext from "../util/AppContext";
+import { aggregationModes } from "../util/Constants";
 import AppText from "./AppText";
-import { aggregationModes } from "../pages/Constants";
 
 const capitalizeWord = s => {
     return s.substring(0, 1).toUpperCase() + s.substring(1);

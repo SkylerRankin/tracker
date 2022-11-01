@@ -1,6 +1,8 @@
-import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
-import dotIcon from '../assets/images/dot.png';
+import React from 'react';
+import { Image, StyleSheet, TouchableOpacity,View } from "react-native";
+
 import checkIcon from '../assets/images/check.png';
+import dotIcon from '../assets/images/dot.png';
 import AppText from "./AppText";
 
 export default function Tracker({navigation, tracker, completed, selected, onPress, index}) {

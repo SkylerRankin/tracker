@@ -1,3 +1,4 @@
+import React from 'react';
 import { Text } from "react-native";
 
 // A default text component so all text uses the same styling.

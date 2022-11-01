@@ -2,7 +2,7 @@ import { subDays } from 'date-fns';
 
 export const getTestData = () => {
     return [
-        { timestamp: 1665458474000, value: 1 }, // today
+        { timestamp: 1665458474000, value: 1 }, // end date
         { timestamp: 1665372074000, value: 2 },
         { timestamp: 1665285674000, value: 3 },
         { timestamp: 1665199274000, value: 4 },
@@ -31,7 +31,7 @@ const getResponses = (count, offsetFromToday, responsesPerDay) => {
         const base = Math.floor(Math.random() * 10) + 1;
         for (let j = 0; j < responsesPerDay; j++) {
             const offset = Math.random() < 0.34;
-            const value = value = offset ? Math.min(Math.max(base + 1 - Math.floor(Math.random() * 5), 0), 10) : base;
+            const value = offset ? Math.min(Math.max(base + 1 - Math.floor(Math.random() * 5), 1), 10) : base;
             responses.push({
                 timestamp: subDays(today, i).getTime(),
                 value,
