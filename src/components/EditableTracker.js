@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import infoIcon from '../assets/images/info.png';
 import upIcon from '../assets/images/upArrow.png';
 import downIcon from '../assets/images/downArrow.png';
-import AppContext from "./AppContext";
+import AppContext from "../util/AppContext";
 import AppText from "./AppText";
 
 export default function EditableTracker({tracker, index, onEditTracker}) {

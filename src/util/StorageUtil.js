@@ -1,5 +1,5 @@
 import * as FileSystem from 'expo-file-system';
-import { saveFileVersion } from './Constants';
+import { saveFileVersion } from '../pages/Constants';
 
 const storageDirectory = `${FileSystem.documentDirectory}tracker_local_storage/`;
 const saveFileName = "save.json";

@@ -1,5 +1,5 @@
 import { subWeeks, subMonths, subYears, isBefore, isAfter, maxTime, minTime, addDays, startOfDay, endOfDay, differenceInDays, subDays, startOfWeek, startOfMonth, startOfYear, isSameMonth, addMonths, getMonth } from "date-fns";
-import { aggregationModeIndices, aggregationModes, approximateDaysPerMonth, approximateDaysPerYear, chartTimeScales, graphTimeRanges, maxChartDatasetCacheSizePerTracker } from "./Constants";
+import { aggregationModeIndices, aggregationModes, chartTimeScales, graphTimeRanges, maxChartDatasetCacheSizePerTracker } from "../pages/Constants";
 
 const arrayAvg = a => a.reduce((prev, curr) => prev + curr, 0) / a.length;
 const arrayMax = a => a.reduce((prev, curr) => Math.max(prev, curr), a[0]);
@@ -53,7 +53,7 @@ const getDateRange = (chartTimeScale, chartTimeOffset, today=new Date()) => {
 const aggregateSegmentOfResponses = (dataset, options) => {
     const aggregationModeIndex = options.aggregationModeIndex;
     const aggregated = [];
-    let currentSegmentStart = dataset[dataset.length - 1].timestamp;
+    let currentSegmentStart = startOfDay(dataset[dataset.length - 1].timestamp).getTime();
     let valuesInSegment = [];
 
     const addSegment = () => {
@@ -68,17 +68,18 @@ const aggregateSegmentOfResponses = (dataset, options) => {
 
     for (let i = dataset.length - 1; i >= 0; i--) {
         const response = dataset[i];
+        const responseTimestamp = startOfDay(response.timestamp).getTime();
 
         if (options.byMonth) {
-            if (!isSameMonth(response.timestamp, currentSegmentStart)) {
+            if (!isSameMonth(responseTimestamp, currentSegmentStart)) {
                 addSegment();
-                currentSegmentStart = response.timestamp;
+                currentSegmentStart = responseTimestamp;
             }
         } else {
-            const distance = differenceInDays(currentSegmentStart, response.timestamp);
+            const distance = differenceInDays(currentSegmentStart, responseTimestamp);
             if (distance >= options.days) {
                 addSegment();
-                currentSegmentStart = response.timestamp;
+                currentSegmentStart = responseTimestamp;
             }
         }
         
@@ -188,13 +189,15 @@ const addStartBufferMonths = (dataset, startTimestamp, endTimestamp) => {
 }
 
 const addEndBufferDays = (dataset, endTimestamp) => {
+    const endDay = startOfDay(endTimestamp);
     const lastResponse = dataset.reduce((prev, curr) => isAfter(curr.timestamp, prev) ? curr.timestamp : prev, minTime);
+    const startOfLastResponse = startOfDay(lastResponse);
     const results = [...dataset];
-    if (isBefore(lastResponse, endTimestamp)) {
-        const difference = differenceInDays(endTimestamp, lastResponse);
+    if (isBefore(startOfLastResponse, endDay)) {
+        const difference = differenceInDays(endDay, startOfLastResponse);
         for (let i = 1; i <= difference; i++) {
             results.push({
-                timestamp: addDays(lastResponse, i).getTime(),
+                timestamp: addDays(startOfLastResponse, i).getTime(),
                 value: -1
             });
         }
@@ -292,6 +295,8 @@ const buildFullDatasetCache = (pastResponsesPerIndex, trackerCount) => {
                 const key = getFullDatasetCacheKey(chartTimeScaleIndex, aggregationModeIndex, trackerIndex);
                 if (!Object.keys(fullDatasetCache).includes(key)) {
                     fullDatasetCache[key] = getProcessedSequence(pastResponsesPerIndex[trackerIndex], aggregationModeIndex, chartTimeScaleIndex);
+                    console.log(`key: ${key} last date = ${fullDatasetCache[key][fullDatasetCache[key].length - 1].timestamp}, last value = ${fullDatasetCache[key][fullDatasetCache[key].length - 1].value}`);
+                    console.log(differenceInDays(fullDatasetCache[key][fullDatasetCache[key].length - 1].timestamp, new Date().getTime()));
                 }
             }
         }

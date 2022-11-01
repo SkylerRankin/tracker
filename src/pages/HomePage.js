@@ -1,19 +1,18 @@
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import TrackingChart from '../components/TrackingChart';
 import Tracker from '../components/Tracker';
 import { useContext, useState } from 'react';
-import AppContext from '../components/AppContext';
+import AppContext from '../util/AppContext';
 import RangeSelector from '../components/RangeSelector';
 import DateAxis from '../components/DateAxis';
 import EditableTracker from '../components/EditableTracker';
-import ChartLineDate from '../components/ChartLineDate';
-import { deleteLocalStorage } from '../components/StorageUtil';
+import { deleteLocalStorage } from '../util/StorageUtil';
 import TrackerHeader from '../components/TrackerHeader';
 import EditTrackersHeader from '../components/EditTrackersHeader';
 import { isSameDay, subYears } from 'date-fns';
 import AppText from '../components/AppText';
 
-const showDebugDeleteButton = false;
+const showDebugDeleteButton = true;
 
 export default function HomePage({navigation}) {
     
@@ -60,14 +59,14 @@ export default function HomePage({navigation}) {
     return (
         <View style={styles.container}>
             <View style={styles.header}>
-                <AppText style={styles.title}>mind tracker</AppText>
+                <AppText style={styles.title}>minatrack</AppText>
                 { showDebugDeleteButton && debugDeleteButton }
             </View>
             <View style={{marginBottom: 20}}><RangeSelector/></View>
             <View style={{ paddingHorizontal: 20 }}>
                 <TrackingChart/>
             </View>
-            { context.usingChartLine ? <ChartLineDate/> : <DateAxis/> }
+            <DateAxis/>
             {
                 editTrackers ?
                 <EditTrackersHeader onBack={() => setEditTrackers(false)}/>
@@ -97,7 +96,6 @@ const styles = StyleSheet.create({
         marginLeft: 10,
         marginBottom: 30,
         fontFamily: "SourceSansPro"
-        // fontFamily: "monospace"
     },
     addButton: {
         width: 40,

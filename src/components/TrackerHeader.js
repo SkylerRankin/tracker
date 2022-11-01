@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import AppContext from "./AppContext";
 import AppText from "./AppText";
-import { aggregationModes } from "./Constants";
+import { aggregationModes } from "../pages/Constants";
 
 const capitalizeWord = s => {
     return s.substring(0, 1).toUpperCase() + s.substring(1);

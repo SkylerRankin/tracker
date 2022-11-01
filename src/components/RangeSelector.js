@@ -1,7 +1,7 @@
-import { useContext, useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Image } from "react-native";
-import AppContext from "./AppContext";
-import { graphTimeRanges } from "./Constants";
+import { useContext } from "react";
+import { View, StyleSheet, TouchableOpacity, Image } from "react-native";
+import AppContext from "../util/AppContext";
+import { graphTimeRanges } from "../pages/Constants";
 import leftArrow from '../assets/images/leftArrow.png';
 import AppText from "./AppText";
 

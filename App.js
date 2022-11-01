@@ -8,8 +8,8 @@ import StartPage from './src/pages/StartPage';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import SafeViewAndroid from './src/styles/SafeViewAndroid';
 import { Component } from 'react';
-import AppContext from './src/components/AppContext';
-import { runStorageInitialization, writeAppData } from './src/components/StorageUtil';
+import AppContext from './src/util/AppContext';
+import { runStorageInitialization, writeAppData } from './src/util/StorageUtil';
 import { addConfigToChartDatasetCache, buildFullDatasetCache, getSampleData } from './src/components/DataUtil';
 import { customFonts } from './src/components/Constants';
 

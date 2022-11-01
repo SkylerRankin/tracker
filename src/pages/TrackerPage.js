@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Dimensions, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import AppContext from '../components/AppContext';
+import AppContext from '../util/AppContext';
 import AppText from '../components/AppText';
 import { invertValue } from '../components/DataUtil';
 import PastResponse from '../components/PastResponse';

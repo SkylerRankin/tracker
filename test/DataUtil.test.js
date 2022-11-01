@@ -1,5 +1,5 @@
 import {describe, expect, test} from '@jest/globals'
-import { addDays, endOfDay, startOfMonth, subMonths } from "date-fns";
+import { addDays, addHours, endOfDay, startOfMonth, subMonths } from "date-fns";
 import { aggregationModeIndices, chartTimeScales } from '../src/components/Constants';
 import { addEndBufferDays, addStartBufferDays, addStartBufferMonths, aggregateSegmentOfResponses, fillMissingDays, getDateRange } from "../src/components/DataUtil";
 
@@ -349,14 +349,14 @@ describe("aggregateSegmentOfResponses", () => {
             { timestamp: addDays(startDate, 2).getTime(), value: 3 },
             { timestamp: addDays(startDate, 2).getTime(), value: 7 },
             { timestamp: addDays(startDate, 4).getTime(), value: 3 },
-            { timestamp: addDays(startDate, 5).getTime(), value: 0 },
+            { timestamp: addDays(startDate, 5).getTime(), value: 6 },
         ];
         const expected = [
             { timestamp: addDays(startDate, 0).getTime(), value: 2 },
             { timestamp: addDays(startDate, 1).getTime(), value: 8 },
             { timestamp: addDays(startDate, 2).getTime(), value: 5 },
             { timestamp: addDays(startDate, 4).getTime(), value: 3 },
-            { timestamp: addDays(startDate, 5).getTime(), value: 0 },
+            { timestamp: addDays(startDate, 5).getTime(), value: 6 },
         ];
 
         const results = aggregateSegmentOfResponses(input, {aggregationModeIndex: aggregationModeIndices.avg, days: 1 });
@@ -448,6 +448,28 @@ describe("aggregateSegmentOfResponses", () => {
         ];
 
         const results = aggregateSegmentOfResponses(input, {aggregationModeIndex: aggregationModeIndices.avg, byMonth: true });
+        expect(results).toEqual(expected);
+    });
+
+    test("1 day average, testing rounding of uneven timestamps", () => {
+        const startDate = new Date(2020, 0, 1);
+        const input = [
+            { timestamp: addHours(startDate, 5).getTime(), value: 2 },
+            { timestamp: addHours(startDate, 9).getTime(), value: 1 },
+
+            { timestamp: addDays(startDate, 1).getTime(), value: 3 },
+            { timestamp: addHours(startDate, 25).getTime(), value: 8 },
+            { timestamp: addHours(startDate, 30).getTime(), value: 3 },
+
+            { timestamp: addDays(startDate, 2).getTime(), value: 7 },
+        ];
+        const expected = [
+            { timestamp: addDays(startDate, 0).getTime(), value: 1 },
+            { timestamp: addDays(startDate, 1).getTime(), value: 4 },
+            { timestamp: addDays(startDate, 2).getTime(), value: 7 }
+        ];
+
+        const results = aggregateSegmentOfResponses(input, {aggregationModeIndex: aggregationModeIndices.avg, days: 1 });
         expect(results).toEqual(expected);
     });
 });

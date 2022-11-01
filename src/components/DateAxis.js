@@ -1,7 +1,7 @@
 import { addDays, differenceInDays, getDate, getMonth } from "date-fns";
 import { useContext } from "react";
 import { View, Text, StyleSheet, Dimensions } from "react-native";
-import AppContext from "./AppContext";
+import AppContext from "../util/AppContext";
 import AppText from "./AppText";
 import { getDateRange } from "./DataUtil";
 

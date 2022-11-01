@@ -4,7 +4,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { LineChart } from 'react-native-wagmi-charts';
 import AppContext from './AppContext';
 import AppText from './AppText';
-import { graphColors } from './Constants';
+import { graphColors } from '../pages/Constants';
 import { getChartDatasetCacheKey, invertValue } from './DataUtil';
 
 const pageWidth = Dimensions.get("window").width;
@@ -33,6 +33,8 @@ export default function TrackingChart() {
             return;
         }
         const data = context.chartDatasetCache[cacheKey].data;
+        console.log(`data for cache key ${cacheKey}`);
+        data.forEach(d => { console.log(`  ${new Date(d.timestamp).toDateString()}: ${d.value}`); });
         if (data.length > 0) {
             datasets.push({
                 dataset: data,

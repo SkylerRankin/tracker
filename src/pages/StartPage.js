@@ -1,9 +1,9 @@
 import { Image, StyleSheet, View } from 'react-native';
 import { useContext } from 'react';
-import AppContext from '../components/AppContext';
+import AppContext from '../util/AppContext';
 import { StackActions } from '@react-navigation/native';
 import logoImage from '../assets/images/icon.png';
-import { deleteLocalStorage } from '../components/StorageUtil';
+import { deleteLocalStorage } from '../util/StorageUtil';
 
 export default function StartPage({navigation}) {
     const context = useContext(AppContext);
