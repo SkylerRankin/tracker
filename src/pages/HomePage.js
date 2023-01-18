@@ -73,9 +73,11 @@ export default function HomePage({navigation}) {
                 :
                 <TrackerHeader onEdit={() => setEditTrackers(true)} onAdd={() => navigation.navigate("Add", { editExisting: false })}/>
             }
-            <ScrollView style={styles.trackersView}>
-                { editTrackers ? editableTrackersList : trackersList }
-            </ScrollView>
+            <View style={styles.trackersView}>
+                <ScrollView style={styles.trackersScrollView}>
+                    { editTrackers ? editableTrackersList : trackersList }
+                </ScrollView>
+            </View>
         </View>
   );
 }
@@ -112,10 +114,11 @@ const styles = StyleSheet.create({
         tintColor: "#777"
     },
     trackersView: {
-        padding: 20,
         flex: 1,
-        marginBottom: 10,
-        marginTop: 10
+        padding: 20
+    },
+    trackersScrollView: {
+        flex: 1
     },
     timeArea: {
         marginBottom: 50,

@@ -1,7 +1,7 @@
 import {describe, expect, test} from '@jest/globals'
 import { addDays, addHours, endOfDay, startOfMonth, subMonths } from "date-fns";
-import { aggregationModeIndices, chartTimeScales } from '../src/components/Constants';
-import { addEndBufferDays, addStartBufferDays, addStartBufferMonths, aggregateSegmentOfResponses, fillMissingDays, getDateRange } from "../src/components/DataUtil";
+import { aggregationModeIndices, chartTimeScales } from '../src/util/Constants';
+import { addEndBufferDays, addStartBufferDays, addStartBufferMonths, aggregateSegmentOfResponses, fillMissingDays, getDateRange } from "../src/util/DataUtil";
 
 describe("fillMissingDays", () => {
     test("no days to fill", () => {

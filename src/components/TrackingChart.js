@@ -8,8 +8,9 @@ import { getChartDatasetCacheKey, invertValue } from '../util/DataUtil';
 import AppText from './AppText';
 
 const pageWidth = Dimensions.get("window").width;
+const pageHeight = Dimensions.get("window").height;
 const chartWidth = pageWidth - 30 * 2;
-const chartHeight = 250;
+const chartHeight = pageHeight * .3;
 const chartLineWidthByScale = [6, 6, 6];
 
 export default function TrackingChart() {

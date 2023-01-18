@@ -36,28 +36,32 @@ export default function TrackerPage({ navigation, route }) {
     pastResponses.reverse();
 
     return (
-        <View style={styles.container}>
-            <View style={{flexDirection: "row"}}>
-                <AppText style={styles.trackerName}>{tracker.name}</AppText>
-                <TouchableOpacity
-                    onPress={() => navigation.pop()}
-                    style={styles.backButton}>
-                    <AppText style={styles.backButtonText}>Back</AppText>
-                </TouchableOpacity>
-            </View>
-            <AppText style={styles.responseText}>{"Today's response..."}</AppText>
-            <ScrollableSelector
-                responseValue={responseValue}
-                setResponseValue={setResponseValue}
-                segments={tracker.segments}/>
-            <AppText style={styles.responseText}>Notes...</AppText>
-            <TextInput onChangeText={setResponseNotes} value={responseNotes} style={styles.notesInput} multiline={true}/>
-            <TouchableOpacity style={styles.saveButtonContainer} onPress={onSave}>
-                <AppText style={{textAlign: "center"}}>Save</AppText>
-            </TouchableOpacity>
-            <AppText style={[styles.responseText, {marginTop: 60}]}>Past responses...</AppText>
-            <ScrollView style={styles.pastResponseContainer}>
-                { pastResponses.map((response, i) => <PastResponse key={i} response={response}/>) }
+        <View style={{flex: 1}}>
+            <ScrollView contentContainerStyle={{flexGrow: 1}}>
+                <View style={styles.container}>
+                    <View style={{flexDirection: "row"}}>
+                        <AppText style={styles.trackerName}>{tracker.name}</AppText>
+                        <TouchableOpacity
+                            onPress={() => navigation.pop()}
+                            style={styles.backButton}>
+                            <AppText style={styles.backButtonText}>Back</AppText>
+                        </TouchableOpacity>
+                    </View>
+                    <AppText style={styles.responseText}>{"Today's response..."}</AppText>
+                    <ScrollableSelector
+                        responseValue={responseValue}
+                        setResponseValue={setResponseValue}
+                        segments={tracker.segments}/>
+                    <AppText style={styles.responseText}>Notes...</AppText>
+                    <TextInput onChangeText={setResponseNotes} value={responseNotes} style={styles.notesInput} multiline={true}/>
+                    <TouchableOpacity style={styles.saveButtonContainer} onPress={onSave}>
+                        <AppText style={{textAlign: "center"}}>Save</AppText>
+                    </TouchableOpacity>
+                    <AppText style={[styles.responseText, {marginTop: 60}]}>Past responses...</AppText>
+                    <View style={styles.pastResponseContainer}>
+                        { pastResponses.map((response, i) => <PastResponse key={i} response={response}/>) }
+                    </View>
+                </View>
             </ScrollView>
         </View>
     );
@@ -97,7 +101,6 @@ const styles = StyleSheet.create({
         marginTop: 30
     },
     pastResponseContainer: {
-        flex: 1,
         paddingLeft: 30,
         paddingRight: 10
     },
